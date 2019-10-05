@@ -1,0 +1,94 @@
+#!/usr/bin/env bash
+set -e
+
+# Folder setup
+DFSCRIPTSDIR=$(dirname $0)
+cd $DFSCRIPTSDIR/..
+DOTFILESDIR=$(pwd -P)
+
+# Terminal colours
+source script/terminal
+source script/utils
+
+# Github URLs
+GITHUB_BASE=https://github.com
+GITHUB_RAW_BASE=https://raw.githubusercontent.com
+
+# Default vars
+OMZ_ROOT=${OMZ_ROOT:-$DOTFILESDIR/oh-my-zsh-core}
+OMZ_REPO=${OMZ_REPO:-robbyrussell/oh-my-zsh}
+OMZ_INSTALL_SCRIPT_FILE=${OMZ_INSTALL_SCRIPT:-tools/install.sh}
+OMZ_BRANCH=${OMZ_BRANCH:-master}
+OMZ_REMOTE=${OMZ_REMOTE:-$GITHUB_BASE/$OMZ_REPO.git}
+OMZ_INSTALL_SCRIPT=${OMZ_INSTALL_SCRIPT:-$GITHUB_RAW_BASE/$OMZ_REPO/$OMZ_BRANCH/$OMZ_INSTALL_SCRIPT_FILE}
+
+# Download the installer script from the repo
+download_installer() {
+    line "Downloading Oh My ZSH Installer..."
+    INSTALLER_FILE_DIR="$(mktemp -d)"
+    INSTALLER_FILE="$(mktemp "$INSTALLER_FILE_DIR"/df-omz-installer-XXXXXXXX)"
+
+    curl -fsSL $OMZ_INSTALL_SCRIPT > $INSTALLER_FILE
+}
+
+# Patch the installer script to fit our needs
+edit_omz_installer() {
+    line "Patching Installer Script..."
+    if [ -s "$INSTALLER_FILE" ]
+    then
+
+        # Stop the installer from creating a zshrc file, we already have a heavily modified script
+        sed -i '' 's/setup_zshrc() {/setup_zshrc() { return/g' $INSTALLER_FILE
+
+        # Stop the installer from printing the Run zsh to try it out message
+        sed -i '' 's/echo "${YELLOW}Run zsh to try it out.${RESET}"/exit/g' $INSTALLER_FILE
+    fi
+}
+
+# Delete the OMZ install folder if it already exists, we just download a fresh copy
+cleanup_previous_omz_installation() {
+    if [ -d "$OMZ_ROOT" ]
+    then
+        line "Cleaning up previously installed version of Oh My Zsh..."
+        rm -rf $OMZ_ROOT
+    fi
+}
+
+# Install OMZ (or running our modified install script)
+install_omz() {
+    line "Installing Oh My ZSH into ${OMZ_ROOT}..."
+    check_omz_install_requirements
+    if [ -s "$INSTALLER_FILE" ]
+    then
+        ZSH=$OMZ_ROOT REMOTE=$OMZ_REMOTE BRANCH=$OMZ_BRANCH sh $INSTALLER_FILE --unattended
+    fi
+}
+
+# Some prereqs for OMZ, stops the installer script failing
+check_omz_install_requirements() {
+    check_and_install_prefer_apt git || {
+        error "'git' is not installed. Please install git first"
+        exit 1
+    }
+    check_and_install_prefer_apt zsh || {
+        error "'zsh' is not installed. Please install zsh first"
+        exit 1
+    }
+}
+
+# Some cleanup
+cleanup_installer() {
+    [ -s "$INSTALLER_FILE" ] && rm -f $INSTALLER_FILE
+    [ -d "$INSTALLER_FILE_DIR" ] && rm -df $INSTALLER_FILE_DIR
+}
+
+# Script process
+main() {
+    download_installer
+    edit_omz_installer
+    cleanup_previous_omz_installation
+    install_omz
+    cleanup_installer
+}
+
+main "$@"

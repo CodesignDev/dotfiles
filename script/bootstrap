@@ -1,0 +1,77 @@
+#!/usr/bin/env bash
+set -e
+
+# Debug mode check
+[[ "$1" == "--debug" || -o xtrace ]] && DEBUG_ENABLED=1
+
+# Get the root dotfiles folder
+DFSCRIPTSDIR=$(dirname $0)
+cd $DFSCRIPTSDIR/..
+DOTFILESDIR=$(pwd -P)
+
+# Which OS is this?
+[[ $(uname -s) == "Darwin" ]] && export MACOS=1 && export UNIX=1
+[[ $(uname -s) == "Linux" ]] && export LINUX=1 && export UNIX=1
+uname -s | grep -q "_NT-" && export WINDOWS=1
+
+# Check if script is interactive
+STDIN_FILE_DESCRIPTOR="0"
+[[ -t $STDIN_FILE_DESCRIPTOR ]] && export IS_INTERACTIVE=1
+
+# Some libraries
+source script/terminal
+source script/utils
+source script/sudo
+
+# Setup debug mode
+debug_setup
+
+# Initialise the colours
+init_colours
+
+# Run some core prerequisite installs
+source script/command-line-tools # For OS X
+source script/apt-prerequisites # For Linux
+
+# Run prereg scripts
+for PREREG_SCRIPT in $DOTFILESDIR/**/prerequisites.sh; do
+
+    # Skip files in script/
+    PREREG_SCRIPT_NAME=${PREREG_SCRIPT#$DOTFILESDIR/}
+    echo $PREREG_SCRIPT_NAME | egrep -q '^script/' && continue
+
+    # Run the script
+    source $PREREG_SCRIPT
+
+done
+
+# Get OMZ and install it to oh-my-zsh-core
+OMZ_ROOT=$DOTFILESDIR/oh-my-zsh-core
+source script/download-omz
+
+# Download private dotfiles repos, useful for repos that contain sensitive data
+source script/download-private-repos
+
+# Start bootstrapping all of the topic folders
+TOPIC_FOLDERS=
+
+line "Next step..."
+
+#Steps to do
+# Bootstrap dotiles itself by downloading OMZ into a folder called oh-my-zsh-core (hidden by .gitignore)
+# Stored in file called bootstrap-omz / download-omz
+
+# Download any private dotfiles repos (need to figure out a way of doing this in a way that can be stored
+# in a public repo but actual files are stored privately)
+# Stored in file called dotiles-download-private-repos / download-private-repos / get-private-repos
+
+# Bootstrap all topic folders by calling any bootstrap.sh files that are stored inside them
+# Stored in this file
+
+
+# Other script files
+
+# install
+# Runs the install scripts for all topics and other scripts
+# Runs pre-install, install, post-install sripts
+

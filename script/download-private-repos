@@ -1,0 +1,117 @@
+#!/usr/bin/env bash
+set -e
+
+# Folder setup
+DFSCRIPTSDIR=$(dirname $0)
+cd $DFSCRIPTSDIR/..
+DOTFILESDIR=$(pwd -P)
+
+# Terminal colours and utils
+source script/terminal
+source script/utils
+
+# GitHub URLs
+GITHUB_BASE=https://github.com
+
+# Install some prerequisites. Required programs: [none]
+install_prerequisites
+
+# Source secrets file
+[[ -f ~/.secrets ]] && source ~/.secrets
+
+# Do we have a GitHub Username and Token
+[[ -z "$GITHUB_USER" ]] && {
+    error "No GitHub User found. Please make sure a GitHub user is setup and stored in a file called .secrets in your home file with the contents GITHUB_USER=username"
+    return
+}
+[[ -z "$GITHUB_TOKEN" ]] && {
+    error "No GitHub Token found. Please make sure a token is setup and stored in a file called .secrets in your home file with the contents GITHUB_TOKEN=xxxx"
+    return
+}
+
+# Create a login variable
+GH_LOGIN="$GITHUB_USER:$GITHUB_TOKEN"
+
+# Get the list of repos
+REPO_LIST=$DOTFILESDIR/private/.repos
+
+# Does the repo list file exist
+[[ -f "$REPO_LIST" ]] || {
+    warning "No private repo list found. Skipping..."
+    return
+}
+
+# Change directories to the private repo storage
+cd $DOTFILESDIR/private
+
+# Loop through each line in the file
+while IFS= read -r line || [[ -n "$line" ]]; do
+
+    # Reset variables
+    URL_HAS_USER=0
+    URL_HAS_SCHEME=0
+
+    # Skip lines that are comments
+    [[ ${line:0:1} == "#" ]] && continue
+
+    # Is the line in the format USER/REPO or REPO
+    [[ $line =~ [A-Za-z0-9_\-]*\/[A-Za-z0-9_\-]*$ ]] && URL_HAS_USER=1
+
+    # Does the line have a full URL (starts with http/https)
+    [[ $line =~ ^https?:\/\/ ]] && URL_HAS_SCHEME=1
+
+    # Get the repo name so we can check if it already exists
+    REPO_NAME=$(echo $line | sed 's/.*\/\([A-Za-z0-9\-_]*\)/\1/g')
+    [[ $URL_HAS_USER == 0 ]] && [[ $URL_HAS_SCHEME == 0 ]] && REPO_NAME=$line
+
+    # Drop .git from the repo name if it exists
+    REPO_NAME=${REPO_NAME/.git/}
+
+    # Print a message to the terminal
+    line "Cloning private repo $line..."
+
+    # Does the directory already exist
+    [[ -d $DOTFILESDIR/private/$REPO_NAME ]] && {
+        warning "Private repo '$REPO_NAME' has already been cloned. Skipping"
+        continue
+    }
+
+    # Check if the user can access the repo (only for non full urls)
+    if [[ $URL_HAS_SCHEME == 0 ]]; then
+
+        # Get the full URL to the repo
+        REPO_URL=$line
+        [[ $URL_HAS_USER == 0 ]] && REPO_URL="$GITHUB_USER/$line"
+
+        # Full API url
+        REPO_API_URL="https://api.github.com/repos/$REPO_URL"
+
+        # Check the repo against the GitHub API to see if the user can access it
+        GH_STATUS=$(curl --write-out %{http_code} --silent --output /dev/null --head -fsSL --user "$GH_LOGIN" $REPO_API_URL)
+
+        # Does the user have access
+        if [[ $GH_STATUS == 200 ]]; then
+
+            # Initiate a clone of the repo
+            git clone https://$GH_LOGIN@github.com/$REPO_URL.git
+
+        else
+
+            # User doesn't have access to the repo, don't bother cloning it but print a warning
+            warning "You don't have access to this repo. Skipping"
+
+        fi
+
+    else
+
+        # Non GitHub URLs can't be checked so post a warning and attempt a clone
+        warning "Non GitHub based repos can't be checked. Attempting a clone of the repo."
+        git clone $line
+
+    fi
+
+# End the loop and pass in our repo list file
+done < $REPO_LIST
+
+# Change directory back
+cd $DOTFILESDIR
