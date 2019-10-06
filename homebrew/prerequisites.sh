@@ -13,11 +13,7 @@ command_exists brew && return 0
     return 0
 }
 
-# Install script location
-HOMEBREW_INSTALL_PATH=
-[[ $MACOS ]] && HOMEBREW_INSTALL_PATH="https://raw.githubusercontent.com/Hombrew/install/master/install"
-[[ $LINUX ]] && HOMEBREW_INSTALL_PATH="https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh"
-
 # Download and run the install script
 line "Downloading and installing Homebrew..."
-sh -c "$( curl -fsSL $HOMEBREW_INSTALL_PATH"
+[[ $MACOS ]] && /usr/bin/ruby -e "$( curl -fsSL "https://raw.githubusercontent.com/Hombrew/install/master/install")"
+[[ $LINUX ]] && sh -c $(curl -fsSL "https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh")"
