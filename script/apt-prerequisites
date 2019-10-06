@@ -18,7 +18,7 @@ set -e
 
 # Is APT available?
 command_exists apt || {
-    error "This script only supports auto installation Debian and Ubuntu. Homebrew will not be installed."
+    error "This script only supports auto installation Debian and Ubuntu."
     INSTALL_HOMEBREW=0
     return 0
 }
@@ -26,7 +26,7 @@ command_exists apt || {
 # Allow homebrew to be installed
 INSTALL_HOMEBREW=1
 
-# Call apt-get update and install for the software that we need
-line "Installing prerequisite software for Linuxbrew..."
+# Install some core dependencies
+line "Installing some prerequisite software for Linux..."
 sudo_askpass apt-get update
-sudo_askpass apt-get install -y build-essential curl file git
+apt_install build-essential curl file git
