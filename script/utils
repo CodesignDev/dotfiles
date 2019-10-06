@@ -3,7 +3,6 @@
 # Sets up debug mode
 debug_setup() {
     if [[ -n "$DEBUG_ENABLED" ]]; then
-    echo "Enabling debug"
         set -x
     else
         QUIET_FLAG=1
