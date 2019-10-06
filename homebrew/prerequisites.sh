@@ -7,6 +7,9 @@ set -e
 # If home brew is already installed, skip this script
 command_exists brew && return 0
 
+# Has SKIP_HOMEBREW_INSTALL been specified
+[[ -z "$SKIP_HOMEBREW_INSTALL" ]] && INSTALL_HOMEBREW=0
+
 # If homebrew is not to be installed, then skip the install
 [[ $INSTALL_HOMEBREW ]] || {
     line "Homebrew installation skipped..."
