@@ -26,7 +26,9 @@ command_exists apt || {
 # Allow homebrew to be installed
 INSTALL_HOMEBREW=1
 
+# Update apt
+apt_update
+
 # Install some core dependencies
 line "Installing some prerequisite software for Linux..."
-sudo_askpass apt-get update
 apt_install build-essential curl file git

@@ -23,66 +23,10 @@ debug_reset() {
 
 # Checks if a command exists on system
 command_exists() {
-    command -v "$@" >/dev/null 2>&1
+    command -v "$1" >/dev/null 2>&1
 }
 
 # Checks if a function exists
 func_exists() {
     [[ -n "$(LC_ALL=C type -t $1)" ]] && [[ "$(LC_ALL=C type -t $1)" = function ]]
 }
-
-# Tries to install a command via brew if possible
-try_brew_install() {
-    COMMAND=$1
-    if [[ $UNIX ]]; then
-        command_exists brew || {
-            [[ $MACOS ]] && BREW_SOFTWARE="Homebrew"
-            [[ $LINUX ]] && BREW_SOFTWARE="Linuxbrew"
-            warning "$BREW_SOFTWARE needs to be installed first. Please install this and then re-run the script."
-            exit 1
-        }
-        line "Installing $COMMAND..."
-        brew install $COMMAND
-    fi
-}
-
-try_apt_install() {
-    COMMAND=$1
-    if [[ $UNIX ]]; then
-        if [[ $LINUX ]]; then
-            line "Installing $COMMAND..."
-            sudo_askpass apt-get update
-            sudo_askpass apt-get install $COMMAND
-        else
-            # warning "Tried install $COMMAND via apt but apt is only available on Linux. Installing via brew instead"
-            return 1
-        fi
-    fi
-}
-
-# Wrapper for both command_exists and try_brew_install
-check_and_install() {
-    COMMAND=$1
-    command_exists $1 || try_brew_install $1
-}
-
-check_and_install_prefer_apt() {
-    COMMAND=$1
-    command_exists $1 || try_apt_install $1 || try_brew_install $1
-}
-
-# Helper to check if a set of programs are already installed, and if not install them
-install_prerequisites() {
-    for PROG in "$@"; do
-        check_and_install $PROG || {
-            error "'$PROG' is not installed. Downloading private repos will be skipped."
-            return
-        }
-    done
-}
-
-# Function checks
-func_exists line || line() { echo $@; }
-func_exists warning || warning() { echo $@; }
-func_exists error || error() { echo $@; }
-func_exists sudo_askpass || sudo_askpass() { sudo $@; }

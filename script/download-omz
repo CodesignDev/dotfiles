@@ -66,14 +66,7 @@ install_omz() {
 
 # Some prereqs for OMZ, stops the installer script failing
 check_omz_install_requirements() {
-    check_and_install_prefer_apt git || {
-        error "'git' is not installed. Please install git first"
-        exit 1
-    }
-    check_and_install_prefer_apt zsh || {
-        error "'zsh' is not installed. Please install zsh first"
-        exit 1
-    }
+    install_apt_prerequisites git zsh || exit
 }
 
 # Some cleanup

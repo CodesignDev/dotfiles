@@ -21,6 +21,7 @@ STDIN_FILE_DESCRIPTOR="0"
 # Some libraries
 source script/terminal
 source script/utils
+source script/packages
 source script/sudo
 
 # Setup debug mode
