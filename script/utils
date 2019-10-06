@@ -56,7 +56,7 @@ try_apt_install() {
             sudo_askpass apt-get install $COMMAND
         else
             # warning "Tried install $COMMAND via apt but apt is only available on Linux. Installing via brew instead"
-            try_brew_install $COMMAND
+            return 1
         fi
     fi
 }
