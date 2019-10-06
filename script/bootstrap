@@ -53,22 +53,19 @@ source script/download-omz
 # Download private dotfiles repos, useful for repos that contain sensitive data
 source script/download-private-repos
 
-# Start bootstrapping all of the topic folders
-TOPIC_FOLDERS=
+# Run bootstrap scripts in all topic folders
+for BOOTSTRAP_SCRIPT in $DOTFILESDIR/**/bootstrap.sh; do
+
+    # Skip files in script/
+    BOOTSTRAP_SCRIPT_NAME=${BOOTSTRAP_SCRIPT#$DOTFILESDIR/}
+    echo $BOOTSTRAP_SCRIPT_NAME | egrep -p '^script/' && continue
+
+    # Run the script
+    source $BOOTSTRAP_SCRIPT
+
+done
 
 line "Next step..."
-
-#Steps to do
-# Bootstrap dotiles itself by downloading OMZ into a folder called oh-my-zsh-core (hidden by .gitignore)
-# Stored in file called bootstrap-omz / download-omz
-
-# Download any private dotfiles repos (need to figure out a way of doing this in a way that can be stored
-# in a public repo but actual files are stored privately)
-# Stored in file called dotiles-download-private-repos / download-private-repos / get-private-repos
-
-# Bootstrap all topic folders by calling any bootstrap.sh files that are stored inside them
-# Stored in this file
-
 
 # Other script files
 
