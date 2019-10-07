@@ -10,17 +10,20 @@ DOTFILESDIR=$(pwd -P)
 source script/terminal
 source script/utils
 
+# Skip this section if the flag is present
+[[ -z "$SKIP_OMZ_INSTALL" ]] || return 0
+
 # Github URLs
-GITHUB_BASE=https://github.com
-GITHUB_RAW_BASE=https://raw.githubusercontent.com
+OMZ_GITHUB_BASE=https://github.com
+OMZ_GITHUB_RAW_BASE=https://raw.githubusercontent.com
 
 # Default vars
 OMZ_ROOT=${OMZ_ROOT:-$DOTFILESDIR/oh-my-zsh-core}
 OMZ_REPO=${OMZ_REPO:-robbyrussell/oh-my-zsh}
 OMZ_INSTALL_SCRIPT_FILE=${OMZ_INSTALL_SCRIPT:-tools/install.sh}
 OMZ_BRANCH=${OMZ_BRANCH:-master}
-OMZ_REMOTE=${OMZ_REMOTE:-$GITHUB_BASE/$OMZ_REPO.git}
-OMZ_INSTALL_SCRIPT=${OMZ_INSTALL_SCRIPT:-$GITHUB_RAW_BASE/$OMZ_REPO/$OMZ_BRANCH/$OMZ_INSTALL_SCRIPT_FILE}
+OMZ_REMOTE=${OMZ_REMOTE:-$OMZ_GITHUB_BASE/$OMZ_REPO.git}
+OMZ_INSTALL_SCRIPT=${OMZ_INSTALL_SCRIPT:-$OMZ_GITHUB_RAW_BASE/$OMZ_REPO/$OMZ_BRANCH/$OMZ_INSTALL_SCRIPT_FILE}
 
 # Download the installer script from the repo
 download_installer() {

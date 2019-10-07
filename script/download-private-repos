@@ -10,6 +10,9 @@ DOTFILESDIR=$(pwd -P)
 source script/terminal
 source script/utils
 
+# Are we skipping section
+[[ -z "$SKIP_PRIVATE_REPO_INSTALL" ]] || return 0
+
 # GitHub URLs
 GITHUB_BASE=https://github.com
 
