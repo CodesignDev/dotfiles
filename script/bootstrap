@@ -34,15 +34,15 @@ init_colours
 source script/command-line-tools # For OS X
 source script/apt-prerequisites # For Linux
 
-# Run prereg scripts
-for PREREG_SCRIPT in $DOTFILESDIR/**/prerequisites.sh; do
+# Run prereq scripts
+for PREREQ_SCRIPT in $DOTFILESDIR/**/prerequisites.sh; do
 
     # Skip files in script/
-    PREREG_SCRIPT_NAME=${PREREG_SCRIPT#$DOTFILESDIR/}
-    echo $PREREG_SCRIPT_NAME | egrep -q '^script/' && continue
+    PREREQ_SCRIPT_NAME=${PREREQ_SCRIPT#$DOTFILESDIR/}
+    echo $PREREQ_SCRIPT_NAME | egrep -q '^script/' && continue
 
     # Run the script
-    source $PREREG_SCRIPT
+    source $PREREQ_SCRIPT
 
 done
 
@@ -64,3 +64,6 @@ for BOOTSTRAP_SCRIPT in $DOTFILESDIR/**/bootstrap.sh; do
     source $BOOTSTRAP_SCRIPT
 
 done
+
+# Move over to our install script
+source script/install
