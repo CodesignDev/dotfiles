@@ -64,12 +64,3 @@ for BOOTSTRAP_SCRIPT in $DOTFILESDIR/**/bootstrap.sh; do
     source $BOOTSTRAP_SCRIPT
 
 done
-
-line "Next step..."
-
-# Other script files
-
-# install
-# Runs the install scripts for all topics and other scripts
-# Runs pre-install, install, post-install sripts
-
