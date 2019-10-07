@@ -79,38 +79,18 @@ while IFS= read -r line || [[ -n "$line" ]]; do
         continue
     }
 
-    # Check if the user can access the repo (only for non full urls)
-    if [[ $URL_HAS_SCHEME == 0 ]]; then
+    # Set up the REPO_URL variable
+    REPO_URL=$line
+    [[ $URL_HAS_USER == 0 ]] && REPO_URL="$GITHUB_USER/$line"
+    [[ $URL_HAS_SCHEME == 0 ]] && REPO_URL="https://$GH_LOGIN@github.com/$REPO_URL"
+    REPO_URL=${REPO_URL%.git}
 
-        # Get the full URL to the repo
-        REPO_URL=$line
-        [[ $URL_HAS_USER == 0 ]] && REPO_URL="$GITHUB_USER/$line"
+    # Check that the git remote exists
+    if git ls-remote $REPO_URL -h &> /dev/null; then
 
-        # Full API url
-        REPO_API_URL="https://api.github.com/repos/$REPO_URL"
-
-        # Check the repo against the GitHub API to see if the user can access it
-        GH_STATUS=$(curl --write-out %{http_code} --silent --output /dev/null --head -fsSL --user "$GH_LOGIN" $REPO_API_URL)
-
-        # Does the user have access
-        if [[ $GH_STATUS == 200 ]]; then
-
-            # Initiate a clone of the repo
-            git clone https://$GH_LOGIN@github.com/$REPO_URL.git
-
-        else
-
-            # User doesn't have access to the repo, don't bother cloning it but print a warning
-            warning "You don't have access to this repo. Skipping"
-
-        fi
-
-    else
-
-        # Non GitHub URLs can't be checked so post a warning and attempt a clone
-        warning "Non GitHub based repos can't be checked. Attempting a clone of the repo."
-        git clone $line
-
+        # Initiate a clone of the repo
+        git clone $REPO_URL
+    
     fi
 
 # End the loop and pass in our repo list file
