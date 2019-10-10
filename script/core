@@ -1,0 +1,27 @@
+#!/usr/bin/env bash
+set -e
+
+# Get the root folder
+DFSCRIPTSDIR=$(dirname $0)
+cd $DFSCRIPTSDIR/..
+DOTFILESDIR=$(pwd -P)
+
+# Include the debug library
+source script/debug
+
+# Set up debug
+debug_init
+
+# Get the OS
+source script/os
+detect_os
+
+# Incldue our other libraries
+source script/terminal
+source script/utils
+source script/packages
+source script/sudo
+
+# Initalize some things
+is_interactive_shell
+init_colours

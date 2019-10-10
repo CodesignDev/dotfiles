@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -e
+
+# OS flags
+export MACOS=0
+export LINUX=0
+export WINDOWS=0
+
+# Detect the OS
+detect_os() {
+    [[ $(uname -s) == "Darwin" ]] && export MACOS=1 && export UNIX=1
+    [[ $(uname -s) == "Linux" ]] && export LINUX=1 && export UNIX=1
+    uname -s | grep $QUIET_FLAG_GREP "_NT-" && export WINDOWS=1
+}

@@ -1,25 +1,7 @@
 #!/usr/bin/env bash
 
-# Sets up debug mode
-debug_setup() {
-    if [[ -n "$DEBUG_ENABLED" ]]; then
-        set -x
-    else
-        QUIET_FLAG=1
-    fi
-}
-
-# Clear debug mode if set
-debug_clear() {
-    set +x
-}
-
-# Re-enables debug mode if it was enabled
-debug_reset() {
-    if [[ -n "$DEBUG_ENABLED" ]]; then
-        set -x
-    fi
-}
+# Blank variables
+export IS_INTERACTIVE=0
 
 # Checks if a command exists on system
 command_exists() {
@@ -31,7 +13,16 @@ func_exists() {
     [[ -n "$(LC_ALL=C type -t $1)" ]] && [[ "$(LC_ALL=C type -t $1)" = function ]]
 }
 
+# Test if the current shell is interactive (tests if STDIN is available)
+is_interactive_shell() {
+    STDIN_FILE_DESCRIPTOR="0"
+    [[ -t $STDIN_FILE_DESCRIPTOR ]] && export IS_INTERACTIVE=1
+}
+
+# Checks if the current script is in a topic that is allowed to run
 is_valid_topic() {
+
+    # Variables
     local SCRIPT_PATH=$1
     local SCRIPT_FILE=$2
     local TOPIC_FOLDER=

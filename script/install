@@ -1,34 +1,13 @@
 #!/usr/bin/env bash
 set -e
 
-# Debug mode check
-[[ "$1" == "--debug" || -o xtrace ]] && DEBUG_ENABLED=1
-
 # Get the root dotfiles folder
 DFSCRIPTSDIR=$(dirname $0)
 cd $DFSCRIPTSDIR/..
 DOTFILESDIR=$(pwd -P)
 
-# Which OS is this?
-[[ $(uname -s) == "Darwin" ]] && export MACOS=1 && export UNIX=1
-[[ $(uname -s) == "Linux" ]] && export LINUX=1 && export UNIX=1
-uname -s | grep -q "_NT-" && export WINDOWS=1
-
-# Check if script is interactive
-STDIN_FILE_DESCRIPTOR="0"
-[[ -t $STDIN_FILE_DESCRIPTOR ]] && export IS_INTERACTIVE=1
-
-# Some libraries
-source script/terminal
-source script/utils
-source script/packages
-source script/sudo
-
-# Setup debug mode
-debug_setup
-
-# Initialise the colours
-init_colours
+# Include core
+source script/core
 
 # Our scripts for the installer
 SCRIPTS=(pre-install install post-install)

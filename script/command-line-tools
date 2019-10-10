@@ -80,7 +80,7 @@ if ! [ -f "/Library/Developer/CommandLineTools/usr/bin/git" ]; then
 fi
 
 # Test to see if the Xcode license has been accepted.
-if [[ $(/usr/bin/xcrun clang 2>&1) =~ /lincense/ ]]; then
+if /usr/bin/xcrun clang 2>&1 | grep $QUIET_FLAG_GREP license; then
     line "Asking for Xcode license confirmation..."
     sudo_askpass xcodebuild -license
 fi
