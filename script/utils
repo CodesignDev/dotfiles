@@ -30,3 +30,19 @@ command_exists() {
 func_exists() {
     [[ -n "$(LC_ALL=C type -t $1)" ]] && [[ "$(LC_ALL=C type -t $1)" = function ]]
 }
+
+is_valid_topic() {
+    local SCRIPT_PATH=$1
+    local SCRIPT_FILE=$2
+
+    # Add the extension to the script_file if it is not there
+    SCRIPT_FILE=${SCRIPT_FILE%.sh}.sh
+
+    # Get the topic folder from the script_path
+    TOPIC_FOLDER=${SCRIPT_PATH%/$SCRIPT_FILE}
+    TOPIC_FOLDER=$(echo $TOPIC_FOLDER | tr [:lower:] [:upper:])
+    
+    # Check if a skip variable is defined
+    SKIP_INSTALL_VARIABLE=SKIP_${TOPIC_FOLDER}_INSTALL
+    [[ -z ${!SKIP_INSTALL_VARIABLE} ]] && return
+}

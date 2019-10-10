@@ -41,6 +41,9 @@ for SCRIPT_NAME in ${SCRIPTS[@]}; do
         SCRIPT_FILE_NAME=${SCRIPT_FILE#$DOTFILESDIR/}
         echo $SCRIPT_FILE_NAME | egrep -q '^script/' && continue
 
+        # Check if this section is being skipped via an env varaible
+        is_valid_topic $SCRIPT_FILE_NAME $SCRIPT_NAME.sh || continue
+
         # Run the script
         source $SCRIPT_FILE
 

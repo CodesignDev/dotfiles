@@ -60,6 +60,9 @@ for BOOTSTRAP_SCRIPT in $DOTFILESDIR/**/bootstrap.sh; do
     BOOTSTRAP_SCRIPT_NAME=${BOOTSTRAP_SCRIPT#$DOTFILESDIR/}
     echo $BOOTSTRAP_SCRIPT_NAME | egrep -p '^script/' && continue
 
+    # Check if this section is being skipped via an env varaible
+    is_valid_topic $BOOTSTRAP_SCRIPT_NAME bootstrap.sh && continue 
+
     # Run the script
     source $BOOTSTRAP_SCRIPT
 
