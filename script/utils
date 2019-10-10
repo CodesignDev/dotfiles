@@ -34,6 +34,8 @@ func_exists() {
 is_valid_topic() {
     local SCRIPT_PATH=$1
     local SCRIPT_FILE=$2
+    local TOPIC_FOLDER=
+    local SKIP_INSTALL_VARIABLE=
 
     # Add the extension to the script_file if it is not there
     SCRIPT_FILE=${SCRIPT_FILE%.sh}.sh
