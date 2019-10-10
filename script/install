@@ -37,6 +37,9 @@ for SCRIPT_NAME in ${SCRIPTS[@]}; do
     # Loop through each script file
     for SCRIPT_FILE in $DOTFILESDIR/**/$SCRIPT_NAME.sh; do
 
+        # If no valid files then skip this file
+        [[ -f $SCRIPT_FILE ]] || break
+
         # Skip files in script/
         SCRIPT_FILE_NAME=${SCRIPT_FILE#$DOTFILESDIR/}
         echo $SCRIPT_FILE_NAME | egrep -q '^script/' && continue
