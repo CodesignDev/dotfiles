@@ -11,14 +11,14 @@ command_exists brew || {
 export HOMEBREW_NO_AUTO_UPDATE=1
 
 # Set up some taps for homebrew using brew bundle
-line "Tapping Homebrew repositories..."
+line "Installing Homebrew Taps and Extensions..."
 
 # Install the relevant taps
 brew tap 'homebrew/core'
-brew tap 'homebrew/cask'
 brew tap 'homebrew/bundle'
 
-# If we are on OS X, add homebrew/services as well
+# If we are on OS X, add homebrew/casl and homebrew/services as well
+[[ $MACOS ]] && brew tap 'homebrew/cask'
 [[ $MACOS ]] && brew tap 'homebrew/services'
 
 # Run a brew update
