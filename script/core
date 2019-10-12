@@ -10,7 +10,7 @@ DOTFILESDIR=$(pwd -P)
 source script/debug
 
 # Set up debug
-debug_init
+debug_init $@
 
 # Get the OS
 source script/os
