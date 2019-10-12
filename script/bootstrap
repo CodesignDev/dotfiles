@@ -20,6 +20,9 @@ for PREREQ_SCRIPT in $DOTFILESDIR/**/prerequisites.sh; do
     PREREQ_SCRIPT_NAME=${PREREQ_SCRIPT#$DOTFILESDIR/}
     echo $PREREQ_SCRIPT_NAME | egrep -q '^script/' && continue
 
+    # Is this topic being skipped by an env variable
+    is_valid_topic $PREREQ_SCRIPT_NAME prerequisites.sh && continue
+
     # Run the script
     source $PREREQ_SCRIPT
 
