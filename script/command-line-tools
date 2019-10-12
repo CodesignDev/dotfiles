@@ -67,7 +67,7 @@ if ! [ -f "/Library/Developer/CommandLineTools/usr/bin/git" ]; then
     if ! [ -f "/Library/Developer/CommandLineTools/usr/bin/git" ]; then
 
         # Install the old fashioned way so inform the user that they will get a popup
-        line "Installing the Command Line Tools (Except a GUI popup)..."
+        line "Installing the Command Line Tools (expect a GUI popup)..."
         sudo_askpass xcode-select --install
         indent "Press any key when the installation has completed."
 
