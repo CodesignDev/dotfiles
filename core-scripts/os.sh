@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -e
 
 # OS flags
 export MACOS=0

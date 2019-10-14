@@ -7,7 +7,7 @@ cd $DFSCRIPTSDIR/..
 DOTFILESDIR=$(pwd -P)
 
 # Include core
-source script/core
+source core-scripts/core.sh
 
 # Run some core prerequisite installs
 source script/command-line-tools # For OS X

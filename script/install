@@ -7,7 +7,7 @@ cd $DFSCRIPTSDIR/..
 DOTFILESDIR=$(pwd -P)
 
 # Include core
-source script/core
+source core-scripts/core.sh
 
 # Our scripts for the installer
 SCRIPTS=(pre-install install post-install)
