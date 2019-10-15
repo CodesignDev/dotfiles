@@ -144,9 +144,3 @@ package_manager_get_default() {
         fi
     done
 }
-
-# Define functions if missing
-func_exists line || line() { echo $@; }
-func_exists warning || warning() { echo $@; }
-func_exists error || error() { echo $@; }
-func_exists sudo_askpass || sudo_askpass() { sudo $@; }
