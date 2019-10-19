@@ -9,10 +9,6 @@ DOTFILESDIR=$(pwd -P)
 # Include core
 source core-scripts/core.sh
 
-# Run some core prerequisite installs
-source script/command-line-tools # For OS X
-source script/apt-prerequisites # For Linux
-
 # Run prereq scripts
 for PREREQ_SCRIPT in $DOTFILESDIR/**/prerequisites.sh; do
 
