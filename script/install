@@ -10,25 +10,4 @@ DOTFILESDIR=$(pwd -P)
 source core-scripts/core.sh
 
 # Our scripts for the installer
-SCRIPTS=(pre-install install post-install)
-for SCRIPT_NAME in ${SCRIPTS[@]}; do
-
-    # Loop through each script file
-    for SCRIPT_FILE in $DOTFILESDIR/**/$SCRIPT_NAME.sh; do
-
-        # If no valid files then skip this file
-        [[ -f $SCRIPT_FILE ]] || break
-
-        # Skip files in script/
-        SCRIPT_FILE_NAME=${SCRIPT_FILE#$DOTFILESDIR/}
-        echo $SCRIPT_FILE_NAME | egrep -q '^script/' && continue
-
-        # Check if this section is being skipped via an env varaible
-        is_valid_topic $SCRIPT_FILE_NAME $SCRIPT_NAME.sh || continue
-
-        # Run the script
-        source $SCRIPT_FILE
-
-    done
-
-done
+run_topic_scripts $DOTFILESDIR "pre-install.sh" "install.sh" "post-install.sh"

@@ -18,24 +18,3 @@ is_interactive_shell() {
     STDIN_FILE_DESCRIPTOR="0"
     [[ -t $STDIN_FILE_DESCRIPTOR ]] && export IS_INTERACTIVE=1
 }
-
-# Checks if the current script is in a topic that is allowed to run
-is_valid_topic() {
-
-    # Variables
-    local SCRIPT_PATH=$1
-    local SCRIPT_FILE=$2
-    local TOPIC_FOLDER=
-    local SKIP_INSTALL_VARIABLE=
-
-    # Add the extension to the script_file if it is not there
-    SCRIPT_FILE=${SCRIPT_FILE%.sh}.sh
-
-    # Get the topic folder from the script_path
-    TOPIC_FOLDER=${SCRIPT_PATH%/$SCRIPT_FILE}
-    TOPIC_FOLDER=$(echo $TOPIC_FOLDER | tr [:lower:] [:upper:])
-    
-    # Check if a skip variable is defined
-    SKIP_INSTALL_VARIABLE=SKIP_${TOPIC_FOLDER}_INSTALL
-    [[ -z ${!SKIP_INSTALL_VARIABLE} ]] && return
-}

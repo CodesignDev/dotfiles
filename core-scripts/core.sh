@@ -19,6 +19,7 @@ source $DIR/terminal.sh
 source $DIR/utils.sh
 source $DIR/packages.sh
 source $DIR/sudo.sh
+source $DIR/topics.sh
 
 # Initalize some things
 is_interactive_shell
