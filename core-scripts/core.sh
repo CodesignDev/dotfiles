@@ -1,25 +1,25 @@
 #!/usr/bin/env bash
 
-# Get thepath to thefolder containing this file
-DIR="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# Get the path to the folder containing this file
+CORE_SCRIPTS_DIR="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Include the debug library
-source $DIR/debug.sh
+source $CORE_SCRIPTS_DIR/debug.sh
 
 # Set up debug
 debug_init $@
 
 # Get the OS
-source $DIR/os.sh
+source $CORE_SCRIPTS_DIR/os.sh
 detect_os
 
 # Incldue our other libraries
-source $DIR/colours.sh
-source $DIR/terminal.sh
-source $DIR/utils.sh
-source $DIR/packages.sh
-source $DIR/sudo.sh
-source $DIR/topics.sh
+source $CORE_SCRIPTS_DIR/colours.sh
+source $CORE_SCRIPTS_DIR/terminal.sh
+source $CORE_SCRIPTS_DIR/utils.sh
+source $CORE_SCRIPTS_DIR/packages.sh
+source $CORE_SCRIPTS_DIR/sudo.sh
+source $CORE_SCRIPTS_DIR/topics.sh
 
 # Initalize some things
 is_interactive_shell
