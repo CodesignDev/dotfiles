@@ -1,26 +1,28 @@
 #!/usr/bin/env bash
 set -e
 
-# Get the root dotfiles folder
-DFSCRIPTSDIR=$(dirname $0)
-cd $DFSCRIPTSDIR/..
-DOTFILESDIR=$(pwd -P)
+# Get the path to the script folder and the root dotfiles folder
+DF_SCRIPTS_DIR="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+DOTFILES_DIR="$(cd -P $(dirname "$DF_SCRIPTS_DIR") && pwd)"
+
+# Change to the dotfiles root directory
+cd $DOTFILES_DIR
 
 # Include core
 source core-scripts/core.sh
 
 # Run all prerequisite scripts
-run_topic_scripts $DOTFILESDIR "prerequisites.sh"
+run_topic_scripts $DOTFILES_DIR "prerequisites.sh"
 
 # Get OMZ and install it to oh-my-zsh-core
-OMZ_ROOT=$DOTFILESDIR/oh-my-zsh-core
+OMZ_ROOT=$DOTFILES_DIR/oh-my-zsh-core
 source script/download-omz
 
 # Download private dotfiles repos, useful for repos that contain sensitive data
 source private/download.sh
 
 # Run the bootstrap script in all topic folders
-run_topic_scripts $DORFILESDIR "bootstrap.sh"
+run_topic_scripts $DOTFILES_DIR "bootstrap.sh"
 
 # Move over to our install script
 source script/install
