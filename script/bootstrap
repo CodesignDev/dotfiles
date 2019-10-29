@@ -17,7 +17,7 @@ OMZ_ROOT=$DOTFILESDIR/oh-my-zsh-core
 source script/download-omz
 
 # Download private dotfiles repos, useful for repos that contain sensitive data
-source script/download-private-repos
+source private/download.sh
 
 # Run the bootstrap script in all topic folders
 run_topic_scripts $DORFILESDIR "bootstrap.sh"
