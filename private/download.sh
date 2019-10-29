@@ -8,7 +8,7 @@ DIR="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Directories
 REPOS_DIR=$DIR/repos
-REPOS_BACKUP_DIR=$DIR/repo-backups/
+REPOS_BACKUP_DIR=$DIR/repo-backups
 
 # Local variables
 local GITHUB_BASE=https://github.com

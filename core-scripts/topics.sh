@@ -60,12 +60,13 @@ run_private_topic_scripts() {
     local ROOT_DIR=$1
     local FILE=$2
     local PRIVATE_DIR
+    local PRIVATE_REPOS_PATH="private/repos"
 
     # Bail if there a private folder doesn't exist
-    [[ ! -d $ROOT_DIR/private/ ]] && return 0
+    [[ ! -d $ROOT_DIR/$PRIVATE_REPOS_PATH/ ]] && return 0
 
     # Loop through each folder inside this private directory
-    for PRIVATE_DIR in $ROOT_DIR/private/*/; do
+    for PRIVATE_DIR in $ROOT_DIR/$PRIVATE_REPOS_PATH/; do
 
         # Remove the final slash from the path
         PRIVATE_DIR=${PRIVATE_DIR%/}
