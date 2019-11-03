@@ -14,10 +14,6 @@ source core-scripts/core.sh
 # Run all prerequisite scripts
 run_topic_scripts $DOTFILES_DIR "prerequisites.sh"
 
-# Get OMZ and install it to oh-my-zsh-core
-OMZ_ROOT=$DOTFILES_DIR/oh-my-zsh-core
-source script/download-omz
-
 # Download private dotfiles repos, useful for repos that contain sensitive data
 source private/download.sh
 
