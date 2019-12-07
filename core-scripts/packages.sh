@@ -145,6 +145,7 @@ package_manager_get_default() {
     done
 }
 
+# Check if a package is installed. Delegates to the relevat package manage function
 is_package_installed() {
     MANAGER=$1
     PACKAGE=$2
@@ -159,6 +160,7 @@ is_package_installed() {
     is_package_installed_$MANAGER $PACKAGE
 }
 
+# Checks if package is installed via homebrew
 is_package_installed_brew() {
     local PACKAGE=$1
 
@@ -166,6 +168,7 @@ is_package_installed_brew() {
     brew list | grep $QUIET_FLAG_GREP "$PACKAGE$"
 }
 
+# Checks if package is installed via apt
 is_package_installed_apt() {
     local PACKAGE=$1
 
@@ -173,6 +176,7 @@ is_package_installed_apt() {
     dpkg --get-selections | awk '{print $1}' | grep $QUIET_FLAG_GREP "$PACKAGE$"
 }
 
+# Lists files that are part of a package, delegates to the relevant package manager
 list_installed_package_files() {
     MANAGER=$1
     PACKAGE=$2
@@ -187,6 +191,7 @@ list_installed_package_files() {
     list_installed_package_files_$MANAGER $PACKAGE
 }
 
+# Lists all files that are part of a package via homebrew
 list_installed_package_files_brew() {
     local PACKAGE=$1
 
@@ -194,6 +199,7 @@ list_installed_package_files_brew() {
     brew list -v $PACKAGE 2>/dev/null
 }
 
+# Lists all files that are part of a package via apt
 list_installed_package_files_apt() {
     local PACKAGE=$1
 
