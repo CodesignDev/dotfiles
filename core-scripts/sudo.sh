@@ -62,14 +62,14 @@ BASH
         unset SUDO_PASSWORD
 
         # Create the file which will store the script
-        SUDO_ASKPASS_DIR="$(sudo mktemp -d)"
-        SUDO_ASKPASS="$(sudo mktemp "$SUDO_ASKPASS_DIR"/df-askpass-XXXXXXXX)"
+        SUDO_ASKPASS_DIR="$(mktemp -d)"
+        SUDO_ASKPASS="$(mktemp "$SUDO_ASKPASS_DIR"/df-askpass-XXXXXXXX)"
 
         # Set up permissions on the sudo_askpass script
-        sudo chmod 1700 "$SUDO_ASKPASS_DIR" "$SUDO_ASKPASS"
+        chmod 700 "$SUDO_ASKPASS_DIR" "$SUDO_ASKPASS"
 
         # Store the script in the file
-        sudo bash -c "cat > '$SUDO_ASKPASS'" <<<"$SUDO_PASSWORD_SCRIPT"
+        bash -c "cat > '$SUDO_ASKPASS'" <<<"$SUDO_PASSWORD_SCRIPT"
 
         # Perform some cleanup
         unset SUDO_PASSWORD_SCRIPT
