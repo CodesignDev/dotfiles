@@ -144,3 +144,59 @@ package_manager_get_default() {
         fi
     done
 }
+
+is_package_installed() {
+    MANAGER=$1
+    PACKAGE=$2
+    
+    # Was a package manager passed
+    package_manager_is_valid $MANAGER || {
+        MANAGER=$(package_manager_get_default)
+        PACKAGES=$1
+    }
+
+    # Call the function to check files
+    is_package_installed_$MANAGER $PACKAGE
+}
+
+is_package_installed_brew() {
+    local PACKAGE=$1
+
+    command_exists brew || return 1
+    brew list | grep $QUIET_FLAG_GREP "$PACKAGE$"
+}
+
+is_package_installed_apt() {
+    local PACKAGE=$1
+
+    command_exists apt || return 1
+    dpkg --get-selections | awk '{print $1}' | grep $QUIET_FLAG_GREP "$PACKAGE$"
+}
+
+list_installed_package_files() {
+    MANAGER=$1
+    PACKAGE=$2
+    
+    # Was a package manager passed
+    package_manager_is_valid $MANAGER || {
+        MANAGER=$(package_manager_get_default)
+        PACKAGES=$1
+    }
+
+    # Call the function to check files
+    list_installed_package_files_$MANAGER $PACKAGE
+}
+
+list_installed_package_files_brew() {
+    local PACKAGE=$1
+
+    command_exists brew || return 1
+    brew list -v $PACKAGE 2>/dev/null
+}
+
+list_installed_package_files_apt() {
+    local PACKAGE=$1
+
+    command_exists apt || return 1
+    dpkg -L $PACKAGE 2>/dev/null
+}
