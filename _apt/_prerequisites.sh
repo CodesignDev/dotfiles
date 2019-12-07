@@ -13,7 +13,7 @@ set -e
 # & Red Hat) then some parts of the dotfiles will not install. Homebrew being an
 # example.
 
-# This is only for OS X
+# This is only for Linux
 [[ $LINUX == 1 ]] || return 0
 
 # Is APT available?
