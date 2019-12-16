@@ -1,15 +1,22 @@
 #!/usr/bin/env bash
 
-# Tries to install a package via brew if possible
-brew_install() {
-    PACKAGE=$1
+# Is homebrew installed
+brew_required() {
     if [[ $UNIX ]]; then
         command_exists brew || {
             [[ $MACOS ]] && BREW_SOFTWARE="Homebrew"
             [[ $LINUX ]] && BREW_SOFTWARE="Linuxbrew"
             warning "$BREW_SOFTWARE needs to be installed first. Please install this and then re-run the script."
-            exit 1
+            return 1
         }
+    fi
+}
+
+# Tries to install a package via brew if possible
+brew_install() {
+    PACKAGE=$1
+    if [[ $UNIX ]]; then
+        command_exists brew || return
         line "Installing $PACKAGE..."
         brew install $PACKAGE
     fi
