@@ -57,6 +57,32 @@ package_manager_update() {
     apt_update
 }
 
+brew_add_repo() {
+    REPO=$1
+    [[ $UNIX == 1 ]] || return
+    command_exists brew || return
+    brew tap | grep $QUIET_FLAG_GREP $REPO || {
+        line "Adding brew tap '$REPO'..."
+        brew tap "$REPO"
+    }
+}
+
+apt_add_repo() {
+    REPO_URL=$1
+    REPO_DATA=$2
+    GPGKEY=$3
+    REPO_NAME=$4
+    [[ $LINUX == 1 ]] || return
+    command_exists apt || return
+
+    line "Adding apt repository '$REPO_URL'..."
+    install_apt_prerequisites curl apt-transport-https
+    curl -s $2 | sudo_askpass apt-key add -
+    echo "deb $REPO_URL $REPO_DATA" | sudo_askpass tee -a /etc/apt/sources.list.d/$REPO_NAME.list
+
+    apt_update
+}
+
 # Wrapper for checking the command exists and then trying to install using the relevant package manager
 check_and_install() {
 
