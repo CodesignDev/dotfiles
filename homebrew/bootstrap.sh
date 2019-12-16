@@ -14,12 +14,12 @@ export HOMEBREW_NO_AUTO_UPDATE=1
 line "Installing Homebrew Taps and Extensions..."
 
 # Install the relevant taps
-brew tap 'homebrew/core'
-brew tap 'homebrew/bundle'
+brew_add_repo 'homebrew/core'
+brew_add_repo 'homebrew/bundle'
 
 # If we are on OS X, add homebrew/casl and homebrew/services as well
-[[ $MACOS ]] && brew tap 'homebrew/cask'
-[[ $MACOS ]] && brew tap 'homebrew/services'
+[[ $MACOS ]] && brew_add_repo 'homebrew/cask'
+[[ $MACOS ]] && brew_add_repo 'homebrew/services'
 
 # Run a brew update
 line "Updating Homebrew..."
