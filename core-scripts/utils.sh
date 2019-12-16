@@ -21,5 +21,5 @@ is_interactive_shell() {
 
 github_get_latest_release_version() {
     REPO=$1
-    curl -fsSL "https://api.github.com/repos/$1/releases/latest" | jq '.tag_name'
+    curl -fsSL "https://api.github.com/repos/$REPO/releases/latest" | jq '.tag_name'
 }
