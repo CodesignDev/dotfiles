@@ -8,6 +8,7 @@ PLUGIN_FILE=$DIR/kube_plugins.txt
 if [[ ! -f $PLUGIN_FILE ]]; then
 
     # Install the plugins via krew
+    line "Installing kubectl plugins..."
     kubectl krew install --no-update-index < $PLUGIN_FILE
 fi
 
