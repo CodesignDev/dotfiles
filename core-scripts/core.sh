@@ -13,6 +13,10 @@ debug_init $@
 source $CORE_SCRIPTS_DIR/os.sh
 detect_os
 
+# Get the Arch
+source $CORE_SCRIPTS_DIR/arch.sh
+detect_arch
+
 # Incldue our other libraries
 source $CORE_SCRIPTS_DIR/colours.sh
 source $CORE_SCRIPTS_DIR/terminal.sh

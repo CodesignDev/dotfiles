@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # OS flags
+export OS=
 export MACOS=0
 export LINUX=0
 export WSL=0
@@ -12,6 +13,10 @@ detect_os() {
     is_linux && export LINUX=1 && export UNIX=1
     is_wsl && export WSL=1
     is_windows && export WINDOWS=1
+
+    is_macos && export OS="macos"
+    is_linux && export OS="linux"
+    is_windows && export OS="windows"
 
     return 0
 }
