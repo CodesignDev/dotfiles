@@ -18,3 +18,8 @@ is_interactive_shell() {
     STDIN_FILE_DESCRIPTOR="0"
     [[ -t $STDIN_FILE_DESCRIPTOR ]] && export IS_INTERACTIVE=1
 }
+
+github_get_latest_release_version() {
+    REPO=$1
+    curl -fsSL "https://api.github.com/repos/$1/releases/latest" | jq '.tag_name'
+}
