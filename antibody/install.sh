@@ -13,6 +13,6 @@ if command_exists brew; then
 else
 
     # Install via the official script instead
-    curl -sL https://get.io/antibody | sudo sh -s -- -b /usr/local/bin
+    curl -sL https://git.io/antibody | sudo sh -s -- -b /usr/local/bin
 
 fi
