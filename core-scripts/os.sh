@@ -30,7 +30,7 @@ is_linux() {
 }
 
 is_wsl() {
-    is_linux && [[ $(uname -r | grep $QUIET_FLAG_GREP "Microsoft") ]]
+    is_linux && [[ $(uname -r | grep $QUIET_FLAG_GREP -i "microsoft") ]]
 }
 
 is_windows() {
