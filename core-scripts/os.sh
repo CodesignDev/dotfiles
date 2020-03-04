@@ -5,6 +5,7 @@ export OS=
 export MACOS=0
 export LINUX=0
 export WSL=0
+export WSL2=0
 export WINDOWS=0
 
 # Detect the OS
@@ -12,6 +13,7 @@ detect_os() {
     is_macos && export MACOS=1 && export UNIX=1
     is_linux && export LINUX=1 && export UNIX=1
     is_wsl && export WSL=1
+    is_wsl2 && export WSL2=1
     is_windows && export WINDOWS=1
 
     is_macos && export OS="macos"
@@ -31,6 +33,10 @@ is_linux() {
 
 is_wsl() {
     is_linux && [[ $(uname -r | grep $QUIET_FLAG_GREP -i "microsoft") ]]
+}
+
+is_wsl2() {
+    is_wsl && [[ $(uname -r | grep $QUIET_FLAG_GREP -i "microsoft-standard") ]]
 }
 
 is_windows() {
