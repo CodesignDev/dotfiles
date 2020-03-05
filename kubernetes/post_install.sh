@@ -11,4 +11,3 @@ if [[ ! -f $PLUGIN_FILE ]]; then
     line "Installing kubectl plugins..."
     kubectl krew install --no-update-index < $PLUGIN_FILE
 fi
-

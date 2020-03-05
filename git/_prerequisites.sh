@@ -37,7 +37,7 @@ if [[ $LINUX == 1 ]]; then
 
         # Log the current action
         line "Building git credential manager for Linux..."
-     
+
         # Install some apt packages (We're skipping the command exists check here as these are libs)
         apt_install libsecret-1-0
         apt_install libsecret-1-dev
@@ -57,7 +57,7 @@ if [[ $LINUX == 1 ]]; then
 
         # ...then change back the directory
         cd -
-    
+
     fi
 
     # Now check see if the libseret credential manager is there
@@ -74,7 +74,7 @@ if [[ $GIT_CREDENTIAL_MANAGER ]]; then
 
     # Is the selected credential manager set in the global git config
     if [[ "$(git config --global credential.helper)" != "$GIT_CREDENTIAL_MANAGER" ]]; then
-        
+
         # If not, set this credential manager in the global gitconfig file
         git config --global credential.helper $GIT_CREDENTIAL_MANAGER
 

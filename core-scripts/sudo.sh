@@ -110,7 +110,7 @@ sudo_cleanup() {
     fi
 }
 
-# Clear the sudo timer to force a password 
+# Clear the sudo timer to force a password
 sudo --reset-timestamp
 
 # Initialise the sudo pass
