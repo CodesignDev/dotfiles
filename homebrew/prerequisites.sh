@@ -18,5 +18,5 @@ command_exists brew && return 0
 
 # Download and run the install script
 line "Downloading and installing Homebrew..."
-[[ $MACOS ]] && /usr/bin/ruby -e $(curl -fsSL "https://raw.githubusercontent.com/Hombrew/install/master/install")
-[[ $LINUX ]] && sh -c $(curl -fsSL "https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh")
+[[ $MACOS == 1 ]] && /usr/bin/ruby -e $(curl -fsSL "https://raw.githubusercontent.com/Hombrew/install/master/install")
+[[ $LINUX == 1 ]] && sh -c $(curl -fsSL "https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh")

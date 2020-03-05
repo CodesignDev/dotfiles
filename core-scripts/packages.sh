@@ -2,10 +2,10 @@
 
 # Is homebrew installed
 brew_required() {
-    if [[ $UNIX ]]; then
+    if [[ $UNIX == 1 ]]; then
         command_exists brew || {
-            [[ $MACOS ]] && BREW_SOFTWARE="Homebrew"
-            [[ $LINUX ]] && BREW_SOFTWARE="Linuxbrew"
+            [[ $MACOS == 1 ]] && BREW_SOFTWARE="Homebrew"
+            [[ $LINUX == 1 ]] && BREW_SOFTWARE="Linuxbrew"
             warning "$BREW_SOFTWARE needs to be installed first. Please install this and then re-run the script."
             return 1
         }
@@ -14,8 +14,9 @@ brew_required() {
 
 # Tries to install a package via brew if possible
 brew_install() {
-    PACKAGE=$1
-    if [[ $UNIX ]]; then
+    local PACKAGE=$1
+
+    if [[ $UNIX == 1 ]]; then
         command_exists brew || return
         line "Installing $PACKAGE..."
         brew install $PACKAGE
@@ -24,9 +25,10 @@ brew_install() {
 
 # Tried to install a package via apt-get if possible
 apt_install() {
-    PACKAGE=$1
-    if [[ $UNIX ]]; then
-        if [[ $LINUX ]]; then
+    local PACKAGE=$1
+
+    if [[ $UNIX == 1 ]]; then
+        if [[ $LINUX == 1 ]]; then
             line "Installing $PACKAGE..."
             sudo_askpass apt-get install -y $PACKAGE
         else
@@ -37,16 +39,18 @@ apt_install() {
 
 # Update brew
 brew_update() {
-    [[ $UNIX ]] || return
+    [[ $UNIX == 1 ]] || return
     command_exists brew || return
+
     line "Updating Homebrew..."
     brew update
 }
 
 # Update apt
 apt_update() {
-    [[ $LINUX ]] || return
+    [[ $LINUX == 1 ]] || return
     command_exists apt || return
+
     line "Updating apt..."
     sudo_askpass apt-get update
 }
@@ -58,7 +62,8 @@ package_manager_update() {
 }
 
 brew_add_repo() {
-    REPO=$1
+    local REPO=$1
+
     [[ $UNIX == 1 ]] || return
     command_exists brew || return
     brew tap | grep $QUIET_FLAG_GREP $REPO || {
@@ -68,10 +73,11 @@ brew_add_repo() {
 }
 
 apt_add_repo() {
-    REPO_URL=$1
-    REPO_DATA=$2
-    GPGKEY=$3
-    REPO_NAME=$4
+    local REPO_URL=$1
+    local REPO_DATA=$2
+    local GPGKEY=$3
+    local REPO_NAME=$4
+
     [[ $LINUX == 1 ]] || return
     command_exists apt || return
 
@@ -88,9 +94,9 @@ apt_add_repo() {
 check_and_install() {
 
     # Get variables
-    COMMAND=$1
-    PACKAGE=${2:-$COMMAND}
-    MANAGER=${3}
+    local COMMAND=$1
+    local PACKAGE=${2:-$COMMAND}
+    local MANAGER=${3}
 
     # Does the command have the format 'command:package'
     if [[ $COMMAND == *":"* ]]; then
@@ -109,7 +115,7 @@ check_and_install() {
     INSTALL_FUNC="${MANAGER}_install"
 
     # Finally check the command exists and if not, install it
-    command_exists $1 || $INSTALL_FUNC $2
+    command_exists $COMMAND || $INSTALL_FUNC $PACKAGE
 }
 
 # Helper to check if a set of programs are already installed, and if not install them
@@ -121,8 +127,8 @@ check_and_install() {
 install_prerequisites() {
 
     # Get variables
-    MANAGER=$1
-    PACKAGES=(${@:2})
+    local MANAGER=$1
+    local PACKAGES=(${@:2})
 
     # Was a package manager passed
     package_manager_is_valid $MANAGER || {
@@ -182,7 +188,7 @@ VALID_PACKAGE_MANAGERS=(apt brew)
 package_manager_is_valid() {
 
     # Check that the requested package manager is one of the valid ones
-    IS_VALID=0
+    local IS_VALID=0
     for MANAGER in "${VALID_PACKAGE_MANAGERS[@]}"; do
         if [[ $MANAGER == $1 ]]; then
             IS_VALID=1
@@ -193,7 +199,7 @@ package_manager_is_valid() {
     # Check that the package manager exists
     command_exists $1 && IS_INSTALLED=1
 
-    [[ $IS_VALID ]] && [[ $IS_INSTALLED ]]
+    [[ $IS_VALID == 1 ]] && [[ $IS_INSTALLED == 1 ]]
     return
 }
 
@@ -211,9 +217,9 @@ package_manager_get_default() {
 
 # Check if a package is installed. Delegates to the relevat package manage function
 is_package_installed() {
-    MANAGER=$1
-    PACKAGE=$2
-    
+    local MANAGER=$1
+    local PACKAGE=$2
+
     # Was a package manager passed
     package_manager_is_valid $MANAGER || {
         MANAGER=$(package_manager_get_default)
@@ -242,9 +248,9 @@ is_package_installed_apt() {
 
 # Lists files that are part of a package, delegates to the relevant package manager
 list_installed_package_files() {
-    MANAGER=$1
-    PACKAGE=$2
-    
+    local MANAGER=$1
+    local PACKAGE=$2
+
     # Was a package manager passed
     package_manager_is_valid $MANAGER || {
         MANAGER=$(package_manager_get_default)

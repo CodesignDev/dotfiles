@@ -18,8 +18,8 @@ brew_add_repo 'homebrew/core'
 brew_add_repo 'homebrew/bundle'
 
 # If we are on OS X, add homebrew/casl and homebrew/services as well
-[[ $MACOS ]] && brew_add_repo 'homebrew/cask'
-[[ $MACOS ]] && brew_add_repo 'homebrew/services'
+[[ $MACOS == 1 ]] && brew_add_repo 'homebrew/cask'
+[[ $MACOS == 1 ]] && brew_add_repo 'homebrew/services'
 
 # Run a brew update
 line "Updating Homebrew..."
