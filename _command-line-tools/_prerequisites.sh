@@ -36,7 +36,7 @@ if ! [ -f "/Library/Developer/CommandLineTools/usr/bin/git" ]; then
     if [ "$MACOS_VERSION_NUMERIC" -ge "100900" ] && [ "$MACOS_VERSION_NUMERIC" -lt "101000" ]; then
         CLT_MACOS_VERSION="Mavericks"
     else
-        CLT_MACOS_VERSION="$(scho "$MACOS_VERSION" | grep -E -o "10\\.\\d+")"
+        CLT_MACOS_VERSION="$(echo "$MACOS_VERSION" | grep -E -o "10\\.\\d+")"
     fi
 
     # Specifics for 10.13 and above

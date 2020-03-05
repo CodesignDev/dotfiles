@@ -50,7 +50,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
 
     # Is the current repo have a full remote URL
     if [[ $URL_HAS_SCHEME == 0 ]]; then
-    
+
         # Extract various variables from the current repo
         REPO_NAME=$(basename $line)
         REPO_USER=$(dirname $line)
@@ -88,7 +88,7 @@ while IFS= read -r line || [[ -n "$line" ]]; do
         if [[ -d $REPO_NAME/.git ]]; then
 
             # Check if the origin remote matches our URL
-            if [[ $(git  --git-dir $REPOS_DIR/$REPO_NAME/.git remote get-url origin) == $REPO_URL ]]; then
+            if [[ $(git --git-dir $REPOS_DIR/$REPO_NAME/.git remote get-url origin) == $REPO_URL ]]; then
 
                 # Print an updating repo message
                 line "Found an existing local copy of $REPO_SLUG, updating to latest version..."
@@ -104,8 +104,8 @@ while IFS= read -r line || [[ -n "$line" ]]; do
                 mv $REPOS_DIR/$REPO_NAME $REPOS_BACKUP_DIR/$REPO_NAME
 
                 # Re-create the folder
-                mkdir $REO_NAME
-            
+                mkdir $REPO_NAME
+
             fi
         fi
 

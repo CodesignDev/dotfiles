@@ -62,7 +62,7 @@ run_private_topic_scripts() {
     local PRIVATE_DIR
     local PRIVATE_REPOS_PATH="private/repos"
 
-    # Bail if there a private folder doesn't exist
+    # Bail if the private folder doesn't exist
     [[ ! -d $ROOT_DIR/$PRIVATE_REPOS_PATH/ ]] && return 0
 
     # Loop through each folder inside this private directory
