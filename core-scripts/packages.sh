@@ -75,9 +75,10 @@ apt_add_repo() {
     [[ $LINUX == 1 ]] || return
     command_exists apt || return
 
+    install_apt_repo_prerequisites
+
     line "Adding apt repository '$REPO_URL'..."
-    install_apt_prerequisites curl apt-transport-https
-    curl -s $2 | sudo_askpass apt-key add -
+    curl -s $GPGKEY | sudo_askpass apt-key add -
     echo "deb $REPO_URL $REPO_DATA" | sudo_askpass tee -a /etc/apt/sources.list.d/$REPO_NAME.list
 
     apt_update
@@ -144,6 +145,36 @@ install_brew_prerequisites() {
 }
 install_apt_prerequisites() {
     install_prerequisites apt $@
+}
+
+# Install prerequisites for adding apt repositories
+install_apt_repo_prerequisites() {
+
+    local CURL_INSTALLED=0
+    local APT_HTTPS_TRANSPORT_INSTALLED=0
+    local APT_HAS_HTTPS_BUILTIN=0
+
+    # Both curl and apt-transport-https are required to install apt repos
+    # curl is required to download GPG keys
+    # apt-transport-https is required to enable https transport for repos
+    [[ $(is_package_installed_apt curl) ]] && CURL_INSTALLED=1
+    [[ $(is_package_installed_apt apt-transport-https) ]] && APT_HTTPS_TRANSPORT_INSTALLED=1
+
+    APT_VERSION=$(apt --version | awk '{print $2}')
+    dpkg --compare-versions "1.5" "lt" "$APT_VERSION" && APT_HAS_HTTPS_BUILTIN=1
+
+    if [[ $CURL_INSTALLED == 1 ]] && ( [[ $APT_HAS_HTTPS_BUILTIN == 1 ]] || [[ $APT_HTTPS_TRANSPORT_INSTALLED == 1 ]] ); then
+        return 0
+    fi
+
+    line "Installing prerequisites for adding apt repositories..."
+
+    [[ $CURL_INSTALLED == 1 ]] || apt_install curl
+
+    [[ $APT_HAS_HTTPS_BUILTIN == 1 ]] && return 0
+    [[ $APT_HTTPS_TRANSPORT_INSTALLED == 1 ]] || apt_install apt-transport-https
+
+    return 0
 }
 
 # Check if package manager is valid
