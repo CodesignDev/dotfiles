@@ -6,6 +6,14 @@ DIR="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # nvm base directory
 export NVM_DIR="$HOME/.nvm"
 
+# Remove nvm if installed by homebrew, if applicable
+if $(command_exists brew); then
+
+    # Check if nvm has been installed via homebrew
+    $(is_package_installed_brew nvm) && brew uninstall nvm --force
+
+fi
+
 # Is nvm already installed
 if $(command_exists nvm); then
 
