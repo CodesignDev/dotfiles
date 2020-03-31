@@ -2,10 +2,14 @@
 set -e
 
 # Homebrew can only be installed on *nix systems
-[[ $UNIX ]] || return 0
+[[ $UNIX == 1 ]] || return 0
 
 # If home brew is already installed, skip this script
 command_exists brew && return 0
+
+# Make homebrew installation on linux optional
+INSTALL_LINUXBREW=${INSTALL_HOMEBREW_ON_LINUX:-0}
+[[ $LINUX == 1 ]] && [[ $INSTALL_LINUXBREW == 0 ]] && INSTALL_HOMEBREW=0
 
 # Has SKIP_HOMEBREW_INSTALL been specified
 [[ -z "$SKIP_HOMEBREW_INSTALL" ]] && INSTALL_HOMEBREW=0
