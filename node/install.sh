@@ -35,9 +35,9 @@ if [[ ! -d $NVM_DIR ]]; then
     git clone https://github.com/nvm-sh/nvm.git "$NVM_DIR"
 
     # Checkout the latest version
-    NVM_TAG_LIST=$(git rev-list --git-dir=$NVM_DIR/.git --work-tree=$NVM_DIR --tags --max-count=1)
-    NVM_VERSION=$(git describe --git-dir=$NVM_DIR/.git --work-tree=$NVM_DIR --abbrev=0 --tags --match "v[0-9]*" $NVM_TAG_LIST)
-    git checkout --git-dir=$NVM_DIR/.git --work-tree=$NVM_DIR $NVM_VERSION
+    NVM_TAG_LIST=$(git --git-dir=$NVM_DIR/.git --work-tree=$NVM_DIR rev-list --tags --max-count=1)
+    NVM_VERSION=$(git --git-dir=$NVM_DIR/.git --work-tree=$NVM_DIR describe --abbrev=0 --tags --match "v[0-9]*" $NVM_TAG_LIST)
+    git --git-dir=$NVM_DIR/.git --work-tree=$NVM_DIR checkout $NVM_VERSION
 
     # Load into the install shell
     . "$NVM_DIR/nvm.sh"
