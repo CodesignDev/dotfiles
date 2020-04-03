@@ -11,8 +11,8 @@ command_exists git || {
 }
 
 # Local variables
-GIT_CREDENTIAL_MANAGER
-GIT_CREDENTIAL_MANAGER_COMMAND
+GIT_CREDENTIAL_MANAGER=
+GIT_CREDENTIAL_MANAGER_COMMAND=
 
 # Console output
 line "Setting up git credential manager..."
@@ -43,8 +43,8 @@ if [[ $LINUX == 1 ]]; then
         apt_install libsecret-1-dev
 
         # Find the source folder and the git-core folder
-        local CREDENTIAL_MANAGER_SOURCE_DIR=$(dirname $(list_installed_package_files_apt git) | grep "git-credential-libsecret.c")
-        local CREDENTIAL_MANAGER_RESULT_DIR=$(dirname $(list_installed_package_files_apt git) | grep "git-credential-cache$")
+        local CREDENTIAL_MANAGER_SOURCE_DIR=$(dirname $(list_installed_package_files_apt git | grep "git-credential-libsecret.c"))
+        local CREDENTIAL_MANAGER_RESULT_DIR=$(dirname $(list_installed_package_files_apt git | grep "git-credential-cache$"))
 
         # Go to the source directory...
         cd $CREDENTIAL_MANAGER_SOURCE_DIR
@@ -53,7 +53,7 @@ if [[ $LINUX == 1 ]]; then
         sudo_askpass make
 
         # ...copy the built file to the git-core folder so that git can find it ...
-        cp "git-credential-libsecret" $CREDENTIAL_MANAGER_RESULT_DIR
+        sudo_askpass cp "git-credential-libsecret" $CREDENTIAL_MANAGER_RESULT_DIR
 
         # ...then change back the directory
         cd -
