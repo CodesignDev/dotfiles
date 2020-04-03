@@ -1,18 +1,22 @@
 #!/usr/bin/env bash
 
-# Attempt to install antibody via homebrew
-if command_exists brew; then
+# Is antibody installed
+if ! $(command_exists antibody); then
 
-    # Check for the tap
-    brew_add_repo getantibody/tap
+    # Attempt to install antibody via homebrew
+    if command_exists brew; then
 
-    # Install
-    brew_install antibody
+        # Check for the tap
+        brew_add_repo getantibody/tap
 
-# Homebrew not available
-else
+        # Install
+        brew_install antibody
 
-    # Install via the official script instead
-    curl -sL https://git.io/antibody | sudo sh -s -- -b /usr/local/bin
+    # Homebrew not available
+    else
 
+        # Install via the official script instead
+        curl -sL https://git.io/antibody | sudo_askpass sh -s -- -b /usr/local/bin
+
+    fi
 fi
