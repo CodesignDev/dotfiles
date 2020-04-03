@@ -14,23 +14,31 @@ brew_required() {
 
 # Tries to install a package via brew if possible
 brew_install() {
-    local PACKAGE=$1
+    local PACKAGES=($@)
 
     if [[ $UNIX == 1 ]]; then
         command_exists brew || return
-        line "Installing $PACKAGE..."
-        brew install $PACKAGE
+        line "Installing $PACKAGES..."
+        brew install $PACKAGES
     fi
 }
 
 # Tried to install a package via apt-get if possible
 apt_install() {
-    local PACKAGE=$1
+    local PACKAGES=($@)
 
     if [[ $UNIX == 1 ]]; then
         if [[ $LINUX == 1 ]]; then
-            line "Installing $PACKAGE..."
-            sudo_askpass apt-get install -y $PACKAGE
+            for PACKAGE in ${PACKAGES[@]}; do
+
+                is_package_installed_apt $PACKAGE && {
+                    line "Skipping Installation of $PACKAGE... Already installed."
+                    continue
+                }
+
+                line "Installing $PACKAGE..."
+                sudo_askpass DEBIAN_FRONTEND=noninteractive apt-get install -y $QUIET_FLAG_APT $PACKAGE
+            done
         else
             return 1
         fi
@@ -235,7 +243,7 @@ is_package_installed_brew() {
     local PACKAGE=$1
 
     command_exists brew || return 1
-    brew list | grep $QUIET_FLAG_GREP "$PACKAGE$"
+    brew list | grep $QUIET_FLAG_GREP "$PACKAGE$" 2>/dev/null
 }
 
 # Checks if package is installed via apt
@@ -243,7 +251,7 @@ is_package_installed_apt() {
     local PACKAGE=$1
 
     command_exists apt || return 1
-    dpkg --get-selections | awk '{print $1}' | grep $QUIET_FLAG_GREP "$PACKAGE$"
+    dpkg --get-selections | awk '{print $1}' | grep $QUIET_FLAG_GREP "$PACKAGE$" 2>/dev/null
 }
 
 # Lists files that are part of a package, delegates to the relevant package manager
