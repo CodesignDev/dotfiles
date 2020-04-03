@@ -31,4 +31,4 @@ apt_update
 
 # Install some core dependencies
 line "Installing some prerequisite software for Linux..."
-apt_install build-essential curl file git
+apt_install build-essential curl file git jq
