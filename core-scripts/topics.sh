@@ -35,7 +35,7 @@ run_topic_scripts() {
 
                 # Check if this topic should be skipped (but only for the non-prefixed script)
                 if ! is_prefixed_script $SCRIPT_FILE; then
-                    should_skip_topic $TOPIC && continue
+                    should_skip_topic $TOPIC || continue
                 fi
 
                 # If the file exists, run it
@@ -122,6 +122,9 @@ is_prefixed_script() {
 should_skip_topic() {
     local TOPIC=$1
     local VARIABLE
+
+    # Convert dashes to underscores
+    TOPIC=${TOPIC//-/_}
 
     # Convert the topic name into uppercase
     TOPIC=$(echo $TOPIC | tr [:lower:] [:upper:])
