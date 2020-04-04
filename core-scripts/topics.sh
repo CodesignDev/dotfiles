@@ -24,6 +24,9 @@ run_topic_scripts() {
             # Remove the final slash from the directory path
             DIR=${DIR%/}
 
+            # Stop processing if the directory isn't valid
+            [[ ${DIR: -1} == "*" ]] && continue
+
             # Get the current topic folder
             TOPIC=$(get_topic_name $DIR)
 
