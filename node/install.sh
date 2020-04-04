@@ -32,23 +32,38 @@ if [[ ! -d $NVM_DIR ]]; then
 
     # Install nvm
     line "Installing nvm..."
-    git clone https://github.com/nvm-sh/nvm.git "$NVM_DIR"
+    git clone $QUIET_FLAG_GIT https://github.com/nvm-sh/nvm.git "$NVM_DIR"
 
     # Checkout the latest version
     NVM_TAG_LIST=$(git --git-dir=$NVM_DIR/.git --work-tree=$NVM_DIR rev-list --tags --max-count=1)
     NVM_VERSION=$(git --git-dir=$NVM_DIR/.git --work-tree=$NVM_DIR describe --abbrev=0 --tags --match "v[0-9]*" $NVM_TAG_LIST)
-    git --git-dir=$NVM_DIR/.git --work-tree=$NVM_DIR checkout $NVM_VERSION
+    git --git-dir=$NVM_DIR/.git --work-tree=$NVM_DIR checkout $QUIET_FLAG_GIT $NVM_VERSION
 
     # Load into the install shell
     . "$NVM_DIR/nvm.sh"
 fi
 
 # Link default packages file to nvm
+[[ -f "$NVM_DIR/default-packages" ]] && rm "$NVM_DIR/default-packages"
 ln -sf $DIR/default_packages.txt $NVM_DIR/default-packages
 
-# Install the latest lts node version
-nvm install node --latest-npm
-nvm install --lts --latest-npm
+# If nvm is installed and is available, install the necessary node versions
+if $(command_exists nvm); then
 
-# Alias the current up to date version of node as the default
-nvm alias default node
+    # Get the node versions for latest and lts
+    NODE_LATEST_VERSION=$(nvm_remote_version | awk '{print $1}')
+    NODE_LTS_VERSION=$(NVM_LTS=* nvm_remote_version | awk '{print $1}')
+
+    # If latest/lts node isn't installed, then install it
+    [[ -d "$NVM_DIR/versions/$NODE_LATEST_VERSION/" ]] || {
+        line "Installing latest node ($NODE_LATEST_VERSION) via nvm..."
+        nvm install node --latest-npm
+    }
+    [[ -d "$NVM_DIR/versions/$NODE_LTS_VERSION/" ]] || {
+        line "Installing latest lts node ($NODE_LTS_VERSION) via nvm..."
+        nvm install --lts --latest-npm
+    }
+
+    # Alias the latest node to default
+    nvm alias default node
+fi
