@@ -15,7 +15,7 @@ INSTALL_LINUXBREW=${INSTALL_HOMEBREW_ON_LINUX:-0}
 [[ -z "$SKIP_HOMEBREW_INSTALL" ]] && INSTALL_HOMEBREW=0
 
 # If homebrew is not to be installed, then skip the install
-[[ $INSTALL_HOMEBREW ]] || {
+[[ $INSTALL_HOMEBREW == 0 ]] && {
     line "Homebrew installation skipped..."
     return 0
 }
