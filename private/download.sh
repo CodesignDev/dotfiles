@@ -10,6 +10,10 @@ DIR="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPOS_DIR=$DIR/repos
 REPOS_BACKUP_DIR=$DIR/repo-backups
 
+# Create the repo directories if needed
+[[ ! -d "$REPOS_DIR" ]] && mkdir -p "$REPOS_DIR"
+[[ ! -d "$REPOS_BACKUP_DIR" ]] && mkdir -p "$REPOS_BACKUP_DIR"
+
 # Local variables
 GITHUB_BASE=https://github.com
 
@@ -20,7 +24,7 @@ install_prerequisites
 REPO_LIST=$DIR/.repos
 
 # If the repo list doesn't exist, then bail
-if [[ -f "$REPO_LIST" ]]; then
+if [[ ! -f "$REPO_LIST" ]]; then
     warning "No private repo list found. Skipping..."
     return 0
 fi
@@ -32,12 +36,12 @@ cd $REPOS_DIR
 while IFS= read -r line || [[ -n "$line" ]]; do
 
     # Some local variables
-    local URL_HAS_USER=0
-    local URL_HAS_SCHEME=0
-    local REPO_NAME
-    local REPO_USER
-    local REPO_SLUG
-    local REPO_URL
+    URL_HAS_USER=0
+    URL_HAS_SCHEME=0
+    REPO_NAME=
+    REPO_USER=
+    REPO_SLUG=
+    REPO_URL=
 
     # Skip lines that are comments
     [[ ${line:0:1} == "#" ]] && continue
@@ -140,4 +144,12 @@ while IFS= read -r line || [[ -n "$line" ]]; do
 done < $REPO_LIST
 
 # Change directory back
-cd $ORIG_DIR
+cd -
+
+# Unset variables that were used
+unset URL_HAS_USER
+unset URL_HAS_SCHEME
+unset REPO_NAME
+unset REPO_USER
+unset REPO_SLUG
+unset REPO_URL
