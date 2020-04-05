@@ -92,7 +92,7 @@ apt_add_repo() {
     install_apt_repo_prerequisites
 
     line "Adding apt repository '$REPO_URL'..."
-    curl -s $GPGKEY | sudo_askpass apt-key add -
+    curl -sS $GPGKEY | sudo_askpass apt-key add -
     echo "deb $REPO_URL $REPO_DATA" | sudo_askpass tee -a /etc/apt/sources.list.d/$REPO_NAME.list
 
     apt_update
