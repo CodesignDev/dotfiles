@@ -1,7 +1,5 @@
-yarn
 lerna
 gulp-cli
 grunt-cli
 webpack-cli
-bower
 commitizen
