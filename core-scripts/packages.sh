@@ -4,9 +4,7 @@
 brew_required() {
     if [[ $UNIX == 1 ]]; then
         command_exists brew || {
-            [[ $MACOS == 1 ]] && BREW_SOFTWARE="Homebrew"
-            [[ $LINUX == 1 ]] && BREW_SOFTWARE="Linuxbrew"
-            warning "$BREW_SOFTWARE needs to be installed first. Please install this and then re-run the script."
+            warning "Homebrew needs to be installed first. Please install this and then re-run the script."
             return 1
         }
     fi
@@ -18,8 +16,16 @@ brew_install() {
 
     if [[ $UNIX == 1 ]]; then
         command_exists brew || return
-        line "Installing $PACKAGES..."
-        brew install $PACKAGES
+        for PACKAGE in ${PACKAGES[@]}; do
+
+            is_package_installed_brew $PACKAGE && {
+                line "Skipping Installation of $PACKAGE... Already installed."
+                continue
+            }
+
+            line "Installing $PACKAGE..."
+            brew install $PACKAGE
+        done
     fi
 }
 

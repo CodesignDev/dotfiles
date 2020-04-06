@@ -3,7 +3,6 @@ set -e
 
 # If homebrew is not installed, skip this section
 command_exists brew || {
-    warning "Homebrew is not installed. Skipping taps."
     return 0
 }
 
@@ -17,7 +16,7 @@ line "Installing Homebrew Taps and Extensions..."
 brew_add_repo 'homebrew/core'
 brew_add_repo 'homebrew/bundle'
 
-# If we are on OS X, add homebrew/casl and homebrew/services as well
+# If we are on OS X, add homebrew/cask and homebrew/services as well
 [[ $MACOS == 1 ]] && brew_add_repo 'homebrew/cask'
 [[ $MACOS == 1 ]] && brew_add_repo 'homebrew/services'
 

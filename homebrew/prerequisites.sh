@@ -22,5 +22,4 @@ INSTALL_LINUXBREW=${INSTALL_HOMEBREW_ON_LINUX:-0}
 
 # Download and run the install script
 line "Downloading and installing Homebrew..."
-[[ $MACOS == 1 ]] && /usr/bin/ruby -e $(curl -fsSL "https://raw.githubusercontent.com/Hombrew/install/master/install")
-[[ $LINUX == 1 ]] && sh -c $(curl -fsSL "https://raw.githubusercontent.com/Linuxbrew/install/master/install.sh")
+/bin/bash -c "$(curl -fsSL "https://raw.githubusercontent.com/Homebrew/install/master/install.sh")"
