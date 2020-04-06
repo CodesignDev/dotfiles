@@ -32,7 +32,7 @@ if $(command_exists kubectl) && ! $(kubectl krew >/dev/null 2>&1); then
 
     # Download and install the plugin manager
     line "Installing krew..."
-    KREW_INSTALL_DIR=$(mktemp -d)
+    KREW_INSTALL_DIR=$(mktemp -dt kubectl-krew.XXXXXXXX)
     curl -fsSL "https://github.com/kubernetes-sigs/krew/releases/download/$KREW_LATEST_VERSION/krew.tar.gz" > $KREW_INSTALL_DIR/krew.tar.gz
     curl -fsSL "https://github.com/kubernetes-sigs/krew/releases/download/$KREW_LATEST_VERSION/krew.yaml" > $KREW_INSTALL_DIR/krew.yaml
     tar zxvf $KREW_INSTALL_DIR/krew.tar.gz -C $KREW_INSTALL_DIR
@@ -41,5 +41,6 @@ if $(command_exists kubectl) && ! $(kubectl krew >/dev/null 2>&1); then
     "$KREW_CMD" update
 
     # Cleanup
-    rm -rf $KREW_INSTALL_DIR/* $KREW_INSTALL_DIR
+    rm -rf $KREW_INSTALL_DIR/*
+    rm -rf $KREW_INSTALL_DIR
 fi
