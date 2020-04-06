@@ -58,7 +58,7 @@ if ! [ -f "/Library/Developer/CommandLineTools/usr/bin/git" ]; then
     # Execute the install and cleanup the placeholder
     line "Installing ${CLT_PACKAGE}..."
     sudo_askpass softwareupdate -i "$CLT_PACKAGE"
-    sudo_askpass rm -f "$CLE_PLACEHOLDER"
+    sudo_askpass rm -f "$CLT_PLACEHOLDER"
 
     # Switch to the installed CLT
     sudo_askpass xcode-select --switch /Library/Developer/CommandLineTools
