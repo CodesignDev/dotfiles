@@ -16,7 +16,7 @@ detect_os() {
     is_wsl2 && export WSL2=1
     is_windows && export WINDOWS=1
 
-    is_macos && export OS="macos"
+    is_macos && export OS="darwin"
     is_linux && export OS="linux"
     is_windows && export OS="windows"
 
