@@ -13,7 +13,6 @@ if ! $(command_exists rbenv); then
     if $(command_exists brew); then
 
         # Install via brew (automatically installs ruby-build)
-        line "Installing rbenv via brew..."
         brew_install rbenv
 
     else
@@ -30,7 +29,7 @@ if ! $(command_exists rbenv); then
         # Build dynamic bash extension
         line "Building dynamic bash extension for rbenv..."
         sh -c "cd \"$RBENV_DIR\" && src/configure && make -C src" || {
-            warning "Dyanmic bash extension failed for rbenv to build correctly."
+            warning "Dyanmic bash extension for rbenv failed to build correctly."
         }
 
         # Include rbenv into the build shell
