@@ -12,4 +12,4 @@ cd $DOTFILES_DIR
 source core-scripts/core.sh
 
 # Our scripts for the installer
-run_topic_scripts $DOTFILES_DIR "pre-install.sh" "install.sh" "post-install.sh"
+run_topic_scripts $DOTFILES_DIR "install-env.sh" "pre-install.sh" "install.sh" "post-install.sh"
