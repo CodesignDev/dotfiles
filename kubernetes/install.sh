@@ -4,17 +4,17 @@
 if ! $(command_exists kubectl); then
 
     # Add repo to apt if required
-    apt_add_repo "https://apt.kubernetes.io" "kubernetes-xenial main" "https://packages.cloud.google.com/apt/doc/apt-key.gpg" "kubernetes"
+    restrict_package_managers apt | add_package_repository "kubernetes" "https://apt.kubernetes.io" "kubernetes-xenial" "main" "https://packages.cloud.google.com/apt/doc/apt-key.gpg"
 
     # Install the kubectl binary
-    check_and_install kubectl
+    install_package kubectl
 fi
 
 # Install helm
 if ! $(command_exists helm); then
 
     # Install helm via homebrew if available
-    brew_install helm || {
+    restrict_package_managers brew | install_package helm || {
 
         # Current step info
         line "Installing helm..."

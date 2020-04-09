@@ -26,14 +26,15 @@ init_terminal_colours() {
     RESET=$(escape '0')
 }
 
-INITED_COLOURS=false
+INITED_COLOURS=0
 init_colours() {
-    if [ ! "$INITED_COLOURS" = true ]; then
-        init_blank_colours
-
-        if [ -t 1 ]; then
-            init_terminal_colours
-        fi
-        INITED_COLOURS=true
+    if [ "$INITED_COLOURS" == "1" ]; then
+        return 0
     fi
+    init_blank_colours
+
+    if is_interactive output; then
+        init_terminal_colours
+    fi
+    INITED_COLOURS=1
 }

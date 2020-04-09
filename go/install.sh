@@ -13,12 +13,12 @@ if ! $(command_exists go); then
     if $(command_exists brew); then
 
         # Install go
-        brew_install go
+        restrict_package_managers brew | install_package go
 
     else
 
         # Remove any old versions of go
-        [[ -d $GOROOT ]] && rm -rf $GOROOT
+        [[ -d $GOROOT ]] && sudo_askpass rm -rf $GOROOT
 
         # Download and install go manually
         line "Installing go..."

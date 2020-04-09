@@ -2,7 +2,7 @@
 set -e
 
 # Install pre-requisite software (linux only for now as homebrew has not been installed yet
-install_apt_prerequisites git
+restrict_package_managers apt | install_package git
 
 # Is git installed?
 command_exists git || {
@@ -39,8 +39,7 @@ if [[ $LINUX == 1 ]]; then
         line "Building git credential manager for Linux..."
 
         # Install some apt packages (We're skipping the command exists check here as these are libs)
-        apt_install libsecret-1-0
-        apt_install libsecret-1-dev
+        restrict_package_managers apt | install_package libsecret-1-0 libsecret-1-dev
 
         # Find the source folder and the git-core folder
         local CREDENTIAL_MANAGER_SOURCE_DIR=$(dirname $(list_installed_package_files_apt git | grep "git-credential-libsecret.c"))

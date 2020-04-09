@@ -7,10 +7,10 @@ if ! $(command_exists antibody); then
     if command_exists brew; then
 
         # Check for the tap
-        brew_add_repo getantibody/tap
+        restrict_package_managers brew | add_package_repository getantibody/tap
 
         # Install
-        brew_install antibody
+        restrict_package_managers brew | install_package antibody
 
     # Homebrew not available
     else

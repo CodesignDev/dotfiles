@@ -18,7 +18,7 @@ REPOS_BACKUP_DIR=$DIR/repo-backups
 GITHUB_BASE=https://github.com
 
 # Install some prerequisites. Required programs: [none]
-install_prerequisites
+# install_prerequisites
 
 # Get the list of repos
 REPO_LIST=$DIR/.repos

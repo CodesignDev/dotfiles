@@ -27,8 +27,8 @@ command_exists apt || {
 INSTALL_HOMEBREW=1
 
 # Update apt
-apt_update
+update_package_managers
 
 # Install some core dependencies
 line "Installing some prerequisite software for Linux..."
-apt_install build-essential curl file git jq
+install_package build-essential curl file git jq
