@@ -93,12 +93,12 @@ apt_list_package_files() {
 apt_install_queue_package() {
     local PACKAGE=$1
 
-    apt_is_package_installed $PACKAGE || return
+    apt_is_package_installed $PACKAGE && return
     APT_INSTALL_QUEUE+=($PACKAGE)
 }
 
 apt_install_queued_packages() {
-    apt install ${APT_INSTALL_QUEUE[*]}
+    [[ ${#APT_INSTALL_QUEUE[@]} -gt 0 ]] && apt install ${APT_INSTALL_QUEUE[*]}
     apt_install_clear_queue
 }
 
