@@ -27,3 +27,9 @@ get_stdin() {
     echo $(</dev/stdin)
     return 0
 }
+
+is_shell_installed() {
+    local REQUESTED_SHELL=$1
+
+    cat /etc/shells | grep $QUIET_FLAG_GREP "$REQUESTED_SHELL$"
+}
