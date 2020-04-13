@@ -3,6 +3,11 @@
 # Get the path to the folder containing this file
 CORE_SCRIPTS_DIR="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
+# Check for already initialized core
+CORE_INITIALIZED=${CORE_INITIALIZED:-0}
+[[ "$CORE_INITIALIZED" == "1" ]] && return 0
+CORE_INITIALIZED=1
+
 # Include the debug library
 source $CORE_SCRIPTS_DIR/debug.sh
 
