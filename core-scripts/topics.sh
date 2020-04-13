@@ -103,6 +103,7 @@ is_protected_topic() {
     local TOPIC=$1
 
     # Check for the core-scripts and script folders
+    [[ $TOPIC == "bin" ]] && return 1
     [[ $TOPIC == "core-scripts" ]] && return 1
     [[ $TOPIC == "script" ]] && return 1
 
