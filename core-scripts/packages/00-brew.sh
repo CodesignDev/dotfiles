@@ -3,6 +3,7 @@
 BREW_INITIAL_UPDATE_DONE=0
 
 brew() {
+    local BREW_CMD=\brew
     local COMMAND=$1
     local ARGS=(${@:2})
 
@@ -16,7 +17,7 @@ brew() {
             ;;
     esac
 
-    \brew $COMMAND ${ARGS[*]}
+    $BREW_CMD $COMMAND ${ARGS[*]}
 }
 
 brew_install_package() {

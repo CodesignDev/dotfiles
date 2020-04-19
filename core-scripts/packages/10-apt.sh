@@ -4,6 +4,7 @@ APT_INITIAL_UPDATE_DONE=0
 APT_INSTALL_QUEUE=()
 
 apt() {
+    local APT_CMD=\apt
     local COMMAND=$1
     local ARGS=(${@:2})
 
@@ -14,7 +15,7 @@ apt() {
     case $COMMAND in
         install)
             [[ $APT_INITIAL_UPDATE_DONE == 0 ]] && apt update
-            COMMAND_PREFIX=" DEBIAN_FRONTEND=noninteractive"
+            COMMAND_PREFIX="DEBIAN_FRONTEND=noninteractive "
             COMMAND_ARGS+="-y"
             ;;
         update)
@@ -25,7 +26,7 @@ apt() {
             ;;
     esac
 
-    $SUDO_COMMAND$COMMAND_PREFIX \apt $COMMAND ${COMMAND_ARGS[*]} ${ARGS[*]}
+    $SUDO_COMMAND $COMMAND_PREFIX$APT_CMD $COMMAND ${COMMAND_ARGS[*]} ${ARGS[*]}
 }
 
 apt_install_package() {
