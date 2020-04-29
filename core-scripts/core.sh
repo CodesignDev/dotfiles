@@ -14,6 +14,24 @@ source $CORE_SCRIPTS_DIR/debug.sh
 # Set up debug
 debug_init $@
 
+# Include terminal related libraries
+source $CORE_SCRIPTS_DIR/shell.sh
+source $CORE_SCRIPTS_DIR/colours.sh
+source $CORE_SCRIPTS_DIR/terminal.sh
+
+# Initialize the terminal functions
+is_interactive_shell
+init_colours
+
+# Include env related functions
+source $CORE_SCRIPTS_DIR/env.sh
+
+# Check for root user
+env_check_root && {
+    error "Don't run this as root!"
+    exit 1
+}
+
 # Get the OS and Arch
 source $CORE_SCRIPTS_DIR/os.sh
 source $CORE_SCRIPTS_DIR/arch.sh
@@ -22,7 +40,7 @@ detect_arch
 
 # Incldue our other core libraries
 source $CORE_SCRIPTS_DIR/commands.sh
-source $CORE_SCRIPTS_DIR/shell.sh
+source $CORE_SCRIPTS_DIR/hooks.sh
 source $CORE_SCRIPTS_DIR/sudo.sh
 source $CORE_SCRIPTS_DIR/topics.sh
 
@@ -31,13 +49,11 @@ source $CORE_SCRIPTS_DIR/package-manager.sh
 source $CORE_SCRIPTS_DIR/packages-core.sh
 init_package_manager_actions
 
-# Initialize our termainl related libraries
-source $CORE_SCRIPTS_DIR/colours.sh
-source $CORE_SCRIPTS_DIR/terminal.sh
-
 # Miscellaneous utilities
 source $CORE_SCRIPTS_DIR/utils.sh
 
 # Initalize some things
-is_interactive_shell
-init_colours
+hooks_init
+
+# Run init hook
+hook_run init

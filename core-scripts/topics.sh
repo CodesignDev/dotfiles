@@ -15,6 +15,9 @@ run_topic_scripts() {
     # Loop through each file passed
     for FILE in ${FILES[@]}; do
 
+        # Call before start hook
+        hook_run before_topic $ROOT_DIR $FILE
+
         # Create a new array with the current file and the prefixed variant
         SCRIPT_FILES=(_$FILE $FILE)
 
@@ -42,11 +45,33 @@ run_topic_scripts() {
                 fi
 
                 # If the file exists, run it
-                [[ -f $DIR/$SCRIPT_FILE ]] && source $DIR/$SCRIPT_FILE
+                [[ -f $DIR/$SCRIPT_FILE ]] || continue
+
+                # Arguments that are passed to the hooks
+                HOOK_ARGS=(
+                    $ROOT_DIR
+                    $FILE
+                    $TOPIC
+                    $DIR
+                    $SCRIPT_FILE
+                )
+
+                # Run the before topic exec hook
+                hook_run before_topic_exec ${HOOK_ARGS[*]}
+
+                # Run the script and the topic_exec hook
+                source $DIR/$SCRIPT_FILE
+                hook_run topic_exec ${HOOK_ARGS[*]}
+
+                # Run the after topic exec hook
+                hook_run after_topic_exec ${HOOK_ARGS[*]}
 
             done
 
         done
+
+        # Call the after topic hook
+        hook_run after_topic $ROOT_DIR $FILE
 
         # Run this file through the private repos as well
         run_private_topic_scripts $ROOT_DIR $FILE
