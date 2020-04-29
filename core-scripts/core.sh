@@ -44,6 +44,10 @@ source $CORE_SCRIPTS_DIR/hooks.sh
 source $CORE_SCRIPTS_DIR/sudo.sh
 source $CORE_SCRIPTS_DIR/topics.sh
 
+# Initialize the plugins system
+source $CORE_SCRIPTS_DIR/plugins.sh
+plugins_init
+
 # Initialize the relevant package managers
 source $CORE_SCRIPTS_DIR/package-manager.sh
 source $CORE_SCRIPTS_DIR/packages-core.sh
