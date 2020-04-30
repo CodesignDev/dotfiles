@@ -32,14 +32,30 @@ plugins_init() {
 }
 
 plugins_get_plugin_file() {
-    PLUGIN_DIR=$1
-    PLUGIN_NAME=$2
+    local PLUGIN_DIR=$1
+    local PLUGIN_NAME=$2
 
-    # Check for plugin_name.dfplugin.sh
-    plugin_check_and_get_plugin_file $PLUGIN_DIR/$PLUGIN_NAME.dfplugin.sh && return 0
-    plugin_check_and_get_plugin_file $PLUGIN_DIR/$PLUGIN_NAME.sh && return 0
-    plugin_check_and_get_plugin_file $PLUGIN_DIR/dfplugin.sh && return 0
-    plugin_check_and_get_plugin_file $PLUGIN_DIR/plugin.sh && return 0
+    local PLUGIN_NAME_PREFIX="dotfiles-plugin-"
+    local POSSIBLE_PLUGIN_NAMES=()
+    local PLUGIN_FILE_SUFFIXES=(dfplugin plugin)
+
+    POSSIBLE_PLUGIN_NAMES+=($PLUGIN_NAME)
+    POSSIBLE_PLUGIN_NAMES+=(${PLUGIN_NAME#"$PLUGIN_NAME_PREFIX"})
+
+    for NAME in ${POSSIBLE_PLUGIN_NAMES[@]}; do
+        POSSIBLE_PLUGIN_NAMES+=($(echo $NAME | sed -r 's/-/_/g'))
+    done
+
+    for NAME in ${POSSIBLE_PLUGIN_NAMES[@]}; do
+        for SUFFIX in ${PLUGIN_FILE_SUFFIXES[@]}; do
+            plugin_check_and_get_plugin_file $PLUGIN_DIR/$NAME.$SUFFIX.sh && return 0
+        done
+        plugin_check_and_get_plugin_file $PLUGIN_DIR/$NAME.sh && return 0
+    done
+
+    for NAME in ${PLUGIN_FILE_SUFFIXES[@]}; do
+        plugin_check_and_get_plugin_file $PLUGIN_DIR/$NAME.sh && return 0
+    done
 
     return 1
 }
