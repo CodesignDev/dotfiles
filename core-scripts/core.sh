@@ -44,6 +44,9 @@ source $CORE_SCRIPTS_DIR/hooks.sh
 source $CORE_SCRIPTS_DIR/sudo.sh
 source $CORE_SCRIPTS_DIR/topics.sh
 
+# Initialize hooks
+hooks_init
+
 # Initialize the plugins system
 source $CORE_SCRIPTS_DIR/plugins.sh
 plugins_init
@@ -55,9 +58,6 @@ init_package_manager_actions
 
 # Miscellaneous utilities
 source $CORE_SCRIPTS_DIR/utils.sh
-
-# Initalize some things
-hooks_init
 
 # Run init hook
 hook_run init
