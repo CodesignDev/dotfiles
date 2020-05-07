@@ -1,0 +1,8 @@
+{
+    "type": "rbenv",
+    "file": "$RBENV_DIR/default-gems",
+    "packages": [
+        "bundler",
+        "rails"
+    ]
+}

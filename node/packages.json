@@ -1,0 +1,11 @@
+{
+    "type": "nvm",
+    "files": "$NVM_DIR/default-packages",
+    "packages": [
+        "lerna",
+        "gulp-cli",
+        "grunt-cli",
+        "webpack-cli",
+        "commitizen"
+    ]
+}

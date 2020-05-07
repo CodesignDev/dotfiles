@@ -1,5 +1,0 @@
-lerna
-gulp-cli
-grunt-cli
-webpack-cli
-commitizen
