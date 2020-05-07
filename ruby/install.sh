@@ -69,20 +69,3 @@ if $(command_exists rbenv); then
     # Install rbenv-each plugin
     git clone https://github.com/rbenv/rbenv-each.git "$(rbenv root)/plugins/rbenv-each"
 fi
-
-# Add default packages
-# TODO: Link file
-
-# Install latest ruby version
-if $(command_exists rbenv); then
-
-    # Get the latest ruby version currently availble
-    RUBY_LATEST_VERSION=$(rbenv install --list | grep -v - | tail -1)
-
-    # Install the latest version if it isn't already installed
-    rbenv versions --bare | grep $QUIET_FLAG_GREP $RUBY_LATEST_VERSION || {
-        line "Installing latest ruby ($RUBY_LATEST_VERSION) via rbenv..."
-        rbenv install $RUBY_LATEST_VERSION
-    }
-fi
-

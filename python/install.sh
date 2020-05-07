@@ -62,27 +62,8 @@ if $(command_exists pyenv); then
         git clone https://github.com/pyenv/pyenv-which-ext.git "$(pyenv root)/plugins/pyenv-which-ext"
     fi
 
-    # Install doctor and update plugins
+    # Install default-packages, doctor, and update plugins
+    git clone https://github.com/jawshooah/pyenv-default-packages.git "$(pyenv root)/plugins/pyenv-default-packages"
     git clone https://github.com/pyenv/pyenv-doctor.git "$(pyenv root)/plugins/pyenv-doctor"
     git clone https://github.com/pyenv/pyenv-update.git "$(pyenv root)/plugins/pyenv-update"
-fi
-
-# Install latest ruby version
-if $(command_exists pyenv); then
-
-    # Get the latest python 2 and 3 versions currently availble
-    PYTHON_3_LATEST_VERSION=$(pyenv install --list | sed 's/^  //' | grep -v - | grep -v 'dev\|a\|b' | grep '^3' | tail -1)
-    PYTHON_2_LATEST_VERSION=$(pyenv install --list | sed 's/^  //' | grep -v - | grep -v 'dev\|a\|b' | grep '^2' | tail -1)
-
-    # Install the latest v3 version if it isn't already installed
-    pyenv versions --bare | grep $QUIET_FLAG_GREP $PYTHON_3_LATEST_VERSION || {
-        line "Installing latest v3 python ($PYTHON_3_LATEST_VERSION) via pyenv..."
-        pyenv install $PYTHON_3_LATEST_VERSION
-    }
-
-    # Install the latest v2 version if it isn't already installed
-    pyenv versions --bare | grep $QUIET_FLAG_GREP $PYTHON_2_LATEST_VERSION || {
-        line "Installing latest v2 python ($PYTHON_2_LATEST_VERSION) via pyenv..."
-        pyenv install $PYTHON_2_LATEST_VERSION
-    }
 fi
