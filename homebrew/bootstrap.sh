@@ -23,3 +23,6 @@ add_package_repository 'homebrew/bundle'
 # Run a brew update
 line "Updating Homebrew..."
 brew update
+
+# Install some default packages
+install_package coreutils git jq
