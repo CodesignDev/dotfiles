@@ -11,6 +11,9 @@ cd $DOTFILES_DIR
 # Include core
 source core-scripts/core.sh
 
+# Run bootstrap start hook
+hook_run bootstrap_start
+
 # Run all prerequisite scripts
 run_topic_scripts $DOTFILES_DIR "prerequisites.sh"
 
@@ -20,5 +23,11 @@ source private/download.sh
 # Run the bootstrap script in all topic folders
 run_topic_scripts $DOTFILES_DIR "bootstrap.sh"
 
+# Run the bootstrap end hook
+hook_run bootstrap_end
+
 # Move over to our install script
 source script/install
+
+# Run cleanup
+[[ -z $CLEANUP_HOOK_RAN ]] && hook_run cleanup

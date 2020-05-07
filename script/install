@@ -11,5 +11,15 @@ cd $DOTFILES_DIR
 # Include core
 source core-scripts/core.sh
 
+# Run the install start hook
+hook_run install_start
+
 # Our scripts for the installer
 run_topic_scripts $DOTFILES_DIR "install-env.sh" "pre-install.sh" "install.sh" "post-install.sh"
+
+# Run the install end hook
+hook_run install_end
+
+# Run the cleanup hook
+hook_run cleanup
+CLEANUP_HOOK_RAN=1
