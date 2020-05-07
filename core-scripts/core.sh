@@ -57,6 +57,7 @@ source $CORE_SCRIPTS_DIR/packages-core.sh
 init_package_manager_actions
 
 # Miscellaneous utilities
+source $CORE_SCRIPTS_DIR/github.sh
 source $CORE_SCRIPTS_DIR/utils.sh
 
 # Run init hook

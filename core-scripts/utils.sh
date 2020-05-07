@@ -1,6 +1,15 @@
 #!/usr/bin/env bash
 
-github_get_latest_release_version() {
-    REPO=$1
-    curl -fsSL "https://api.github.com/repos/$REPO/releases/latest" | jq -j '.tag_name'
+# Wrapper around readlink that works on both linux and osx
+resolve_symlink() {
+    local ARGS=($@)
+
+    # readlink executable
+    local READLINK_FUNC=readlink
+
+    # For osx users, use greadlink from coreutils
+    is_macos && READLINK_FUNC=greadlink
+
+    # Execute the call
+    $READLINK_FUNC ${ARGS[@]}
 }
