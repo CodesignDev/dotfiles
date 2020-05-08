@@ -25,9 +25,11 @@ plugins_init() {
         # Get the name of the plugin file
         local PLUGIN_FILE=$(plugins_get_plugin_file $PLUGIN_DIR $PLUGIN_NAME)
 
+        # Load the plugin
         [[ -f $PLUGIN_DIR/$PLUGIN_FILE ]] && DF_PLUGIN=true source $PLUGIN_DIR/$PLUGIN_FILE
     done
 
+    # Fire the plugin init attempt after loading each of the plugins
     hook_run plugin_init
 }
 
@@ -35,25 +37,45 @@ plugins_get_plugin_file() {
     local PLUGIN_DIR=$1
     local PLUGIN_NAME=$2
 
-    local PLUGIN_NAME_PREFIX="dotfiles-plugin-"
-    local POSSIBLE_PLUGIN_NAMES=()
+    # Local Variables
+    local PLUGIN_NAME_OPTIONS=()
+    local PLUGIN_FILE_PREFIXES=("dotfiles-plugin" "df-plugin" dotfiles df dfplugin plugin)
     local PLUGIN_FILE_SUFFIXES=(dfplugin plugin)
 
-    POSSIBLE_PLUGIN_NAMES+=($PLUGIN_NAME)
-    POSSIBLE_PLUGIN_NAMES+=(${PLUGIN_NAME#"$PLUGIN_NAME_PREFIX"})
+    # Add the passed name as the starting point
+    PLUGIN_NAME_OPTIONS+=($PLUGIN_NAME)
 
-    for NAME in ${POSSIBLE_PLUGIN_NAMES[@]}; do
-        POSSIBLE_PLUGIN_NAMES+=($(echo $NAME | sed -r 's/-/_/g'))
+    # Alternative versions of prefixes (using _ instead of -)
+    for PREFIX in ${PLUGIN_FILE_PREFIXES[@]}; do
+        [[ $PREFIX =~ .*"-".* ]] && PLUGIN_FILE_PREFIXES+=($(echo $PREFIX | sed -r 's/-/_/g'))
     done
 
-    for NAME in ${POSSIBLE_PLUGIN_NAMES[@]}; do
-        for SUFFIX in ${PLUGIN_FILE_SUFFIXES[@]}; do
-            plugin_check_and_get_plugin_file $PLUGIN_DIR/$NAME.$SUFFIX.sh && return 0
+    # Alternative versions of the passed name (creating both _ and - only versions)
+    for NAME in ${PLUGIN_NAME_OPTIONS[@]}; do
+        PLUGIN_NAME_OPTIONS+=($(echo $NAME | sed -r 's/-/_/g'))
+        PLUGIN_NAME_OPTIONS+=($(echo $NAME | sed -r 's/_/-/g'))
+    done
+
+    # Loop through each name and attempt to remove one of the prefixes
+    for NAME in ${PLUGIN_NAME_OPTIONS[@]}; do
+        for PREFIX in ${PLUGIN_FILE_PREFIXES[@]}; do
+            [[ "${NAME#${PREFIX}-}" == "$NAME" ]] || PLUGIN_NAME_OPTIONS+=(${NAME#${PREFIX}-})
+            [[ "${NAME#${PREFIX}_}" == "$NAME" ]] || PLUGIN_NAME_OPTIONS+=(${NAME#${PREFIX}_})
         done
-        plugin_check_and_get_plugin_file $PLUGIN_DIR/$NAME.sh && return 0
     done
 
-    for NAME in ${PLUGIN_FILE_SUFFIXES[@]}; do
+    # Remove duplicates
+    PLUGIN_NAME_OPTIONS=($(echo ${PLUGIN_NAME_OPTIONS[@]} | tr ' ' '\n' | sort -u | tr '\n' ' '))
+
+    # Add suffix variants (name.dfplugin and name.plugin)
+    for NAME in ${PLUGIN_NAME_OPTIONS[@]}; do
+        for SUFFIX in ${PLUGIN_FILE_SUFFIXES[@]}; do
+            PLUGIN_NAME_OPTIONS+=($NAME.$SUFFIX)
+        done
+    done
+
+    # Loop through each current name and see if the file exists and return it
+    for NAME in ${PLUGIN_NAME_OPTIONS[@]}; do
         plugin_check_and_get_plugin_file $PLUGIN_DIR/$NAME.sh && return 0
     done
 
@@ -63,8 +85,10 @@ plugins_get_plugin_file() {
 plugin_check_and_get_plugin_file() {
     PLUGIN_FILE=$1
 
+    # Bail if the file doesn't exist
     [[ -f $PLUGIN_FILE ]] || return 1
 
+    # Return just the file name
     echo $(basename $PLUGIN_FILE)
     return 0
 }
