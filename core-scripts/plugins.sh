@@ -74,6 +74,11 @@ plugins_get_plugin_file() {
         done
     done
 
+    # Add the suffixes on their own to the list of options
+    for SUFFIX in ${PLUGIN_FILE_SUFFIXES[@]}; do
+        PLUGIN_NAME_OPTIONS+=($SUFFIX)
+    done
+
     # Loop through each current name and see if the file exists and return it
     for NAME in ${PLUGIN_NAME_OPTIONS[@]}; do
         plugin_check_and_get_plugin_file $PLUGIN_DIR/$NAME.sh && return 0
@@ -83,7 +88,7 @@ plugins_get_plugin_file() {
 }
 
 plugin_check_and_get_plugin_file() {
-    PLUGIN_FILE=$1
+    local PLUGIN_FILE=$1
 
     # Bail if the file doesn't exist
     [[ -f $PLUGIN_FILE ]] || return 1
