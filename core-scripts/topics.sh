@@ -130,6 +130,7 @@ is_protected_topic() {
     # Check for the core-scripts and script folders
     [[ $TOPIC == "bin" ]] && return 1
     [[ $TOPIC == "core-scripts" ]] && return 1
+    [[ $TOPIC == "plugins" ]] && return 1
     [[ $TOPIC == "script" ]] && return 1
 
     # Check for the private repos folder
