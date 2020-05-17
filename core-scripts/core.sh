@@ -32,6 +32,13 @@ env_check_root && {
     exit 1
 }
 
+# Include the hooks system
+source $CORE_SCRIPTS_DIR/hooks.sh
+
+# Initialize hooks
+hooks_init
+trap "hook_run cleanup" EXIT
+
 # Get the OS and Arch
 source $CORE_SCRIPTS_DIR/os.sh
 source $CORE_SCRIPTS_DIR/arch.sh
@@ -40,12 +47,9 @@ detect_arch
 
 # Incldue our other core libraries
 source $CORE_SCRIPTS_DIR/commands.sh
-source $CORE_SCRIPTS_DIR/hooks.sh
 source $CORE_SCRIPTS_DIR/sudo.sh
 source $CORE_SCRIPTS_DIR/topics.sh
 
-# Initialize hooks
-hooks_init
 
 # Initialize the plugins system
 source $CORE_SCRIPTS_DIR/plugins.sh

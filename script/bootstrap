@@ -28,6 +28,3 @@ hook_run bootstrap_end
 
 # Move over to our install script
 source script/install
-
-# Run cleanup
-[[ -z $CLEANUP_HOOK_RAN ]] && hook_run cleanup

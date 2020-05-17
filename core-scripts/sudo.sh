@@ -117,4 +117,8 @@ sudo --reset-timestamp
 # sudo_init
 
 # Execute our cleanup script when script exits
-trap "sudo_cleanup" EXIT
+if function_exists hook; then
+    hook cleanup sudo_cleanup
+else
+    trap "sudo_cleanup" EXIT
+fi

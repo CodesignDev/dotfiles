@@ -19,7 +19,3 @@ run_topic_scripts $DOTFILES_DIR "install-env.sh" "pre-install.sh" "install.sh" "
 
 # Run the install end hook
 hook_run install_end
-
-# Run the cleanup hook
-hook_run cleanup
-CLEANUP_HOOK_RAN=1
