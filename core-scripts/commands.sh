@@ -6,6 +6,10 @@ command_exists() {
 }
 
 # Checks if a function exists
-func_exists() {
+function_exists() {
     [[ -n "$(LC_ALL=C type -t $1)" ]] && [[ "$(LC_ALL=C type -t $1)" = function ]]
+}
+
+func_exists() {
+    function_exists $@
 }
