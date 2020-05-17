@@ -26,7 +26,7 @@ plugins_init() {
         local PLUGIN_FILE=$(plugins_get_plugin_file $PLUGIN_DIR $PLUGIN_NAME)
 
         # Load the plugin
-        [[ -f $PLUGIN_DIR/$PLUGIN_FILE ]] && DF_PLUGIN=true source $PLUGIN_DIR/$PLUGIN_FILE
+        [[ -f $PLUGIN_FILE ]] && DF_PLUGIN=true source $PLUGIN_FILE
     done
 
     # Fire the plugin init attempt after loading each of the plugins
@@ -93,7 +93,7 @@ plugin_check_and_get_plugin_file() {
     # Bail if the file doesn't exist
     [[ -f $PLUGIN_FILE ]] || return 1
 
-    # Return just the file name
-    echo $(basename $PLUGIN_FILE)
+    # Return the file
+    echo $PLUGIN_FILE
     return 0
 }
