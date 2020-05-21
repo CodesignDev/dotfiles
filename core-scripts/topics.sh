@@ -73,35 +73,6 @@ run_topic_scripts() {
         # Call the after topic hook
         hook_run after_topic $ROOT_DIR $FILE
 
-        # Run this file through the private repos as well
-        run_private_topic_scripts $ROOT_DIR $FILE
-
-    done
-
-    return 0
-}
-
-# Runs the specified script in the topic folders in each private dotfiles repo
-run_private_topic_scripts() {
-
-    # Variables
-    local ROOT_DIR=$1
-    local FILE=$2
-    local PRIVATE_DIR
-    local PRIVATE_REPOS_PATH="private/repos"
-
-    # Bail if the private folder doesn't exist
-    [[ ! -d $ROOT_DIR/$PRIVATE_REPOS_PATH/ ]] && return 0
-
-    # Loop through each folder inside this private directory
-    for PRIVATE_DIR in $ROOT_DIR/$PRIVATE_REPOS_PATH/; do
-
-        # Remove the final slash from the path
-        PRIVATE_DIR=${PRIVATE_DIR%/}
-
-        # Run the topic scripts inside this directory
-        run_topic_scripts $PRIVATE_DIR $FILE
-
     done
 
     return 0
@@ -132,9 +103,6 @@ is_protected_topic() {
     [[ $TOPIC == "core-scripts" ]] && return 1
     [[ $TOPIC == "plugins" ]] && return 1
     [[ $TOPIC == "script" ]] && return 1
-
-    # Check for the private repos folder
-    [[ $TOPIC == "private" ]] && return 1
 
     # Not a protected topic
     return 0

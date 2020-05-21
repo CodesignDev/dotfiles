@@ -16,9 +16,6 @@ hook_run bootstrap_start
 # Run all prerequisite scripts
 run_topic_scripts $DOTFILES_DIR "prerequisites.sh"
 
-# Download private dotfiles repos, useful for repos that contain sensitive data
-source private/download.sh
-
 # Run the bootstrap script in all topic folders
 run_topic_scripts $DOTFILES_DIR "bootstrap.sh"
 
