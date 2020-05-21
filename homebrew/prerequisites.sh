@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -e
 
 # Homebrew can only be installed on *nix systems
 [[ $UNIX == 1 ]] || return 0

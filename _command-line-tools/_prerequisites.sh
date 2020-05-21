@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -e
 
 # This script is in a folder called command-line-tools so that it gets called
 # first during the prereg section of the bootstrap process. This is because a lot

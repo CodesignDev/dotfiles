@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -e
 
 # Install pre-requisite software (linux only for now as homebrew has not been installed yet
 restrict_package_managers apt | install_package git

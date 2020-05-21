@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -e
 
 # If homebrew is not installed, skip this section
 command_exists brew || {

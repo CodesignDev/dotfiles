@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-set -e
 
 # Get the path to the script folder and the root dotfiles folder
 DF_SCRIPTS_DIR="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
