@@ -27,6 +27,8 @@ hook_run() {
     local HOOK=$1
     local ARGS=(${@:2})
 
+    [[ "$DISABLE_HOOKS" == "1" ]] && return 0
+
     local CURRENT_HOOK
     local CURRENT_FUNC
 
