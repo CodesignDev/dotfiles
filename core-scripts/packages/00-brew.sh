@@ -8,7 +8,7 @@ brew() {
     local ARGS=(${@:2})
 
     case $COMMAND in
-        install)
+        install | upgrade)
             [[ $BREW_INITIAL_UPDATE_DONE == 0 ]] && brew update
             ;;
         update)
@@ -26,7 +26,7 @@ brew_install_package() {
     package_manager_exists brew || return
 
     for PACKAGE IN ${PACKAGES[@]}; do
-        brew_is_package_installed $PACKAGE || return
+        brew_is_package_installed $PACKAGE && continue
 
         brew install $PACKAGE
     done
@@ -38,6 +38,20 @@ brew_install_package_group() {
 
 brew_update_packages() {
     brew update
+}
+
+brew_upgrade_packages() {
+    local PACKAGES=$@
+
+    package_manager_exists brew || return
+
+    [[ ${#PACKAGES[@]} -eq 0 ]] && brew upgrade
+
+    for PACKAGE IN ${PACKAGES[@]}; do
+        brew_is_package_installed $PACKAGE || continue
+
+        brew upgrade $PACKAGE
+    done
 }
 
 brew_add_package_repository() {

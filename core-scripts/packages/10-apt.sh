@@ -1,10 +1,10 @@
-#!/usr/bin/ebnv bash
+#!/usr/bin/env bash
 
 APT_INITIAL_UPDATE_DONE=0
-APT_INSTALL_QUEUE=()
+APT_PACKAGE_QUEUE=()
 
 apt() {
-    local APT_CMD=\apt
+    local APT_CMD=$(get_command_path apt)
     local COMMAND=$1
     local ARGS=(${@:2})
 
@@ -13,7 +13,7 @@ apt() {
     local COMMAND_ARGS=$QUIET_FLAG_APT
 
     case $COMMAND in
-        install)
+        install | upgrade)
             [[ $APT_INITIAL_UPDATE_DONE == 0 ]] && apt update
             COMMAND_PREFIX="DEBIAN_FRONTEND=noninteractive "
             COMMAND_ARGS+="-y"
@@ -34,8 +34,8 @@ apt_install_package() {
 
     package_manager_exists apt || return
 
-    package_manager_cmd_exec_for_each apt_install_queue_package ${PACKAGES[@]}
-    apt_install_queued_packages
+    APT_QUEUE_ACTION=install package_manager_cmd_exec_for_each apt_queue_package ${PACKAGES[@]}
+    apt_action_queued_packages install
 }
 
 apt_install_package_group() {
@@ -44,6 +44,19 @@ apt_install_package_group() {
 
 apt_update_packages() {
     apt update
+}
+
+apt_upgrade_packages() {
+    local PACKAGES=$@
+
+    package_manager_exists apt || return
+
+    if [[ ${#PACKAGES[@]} -eq 0 ]]; then
+        apt upgrade
+    else
+        APT_QUEUE_ACTION=upgrade package_manager_cmd_exec_for_each apt_queue_package ${PACKAGES[@]}
+        apt_action_queued_packages upgrade
+    fi
 }
 
 apt_add_package_repository() {
@@ -91,35 +104,62 @@ apt_list_package_files() {
     dpkg -L $PACKAGE 2>/dev/null
 }
 
-apt_install_queue_package() {
+apt_queue_package() {
     local PACKAGE=$1
 
-    apt_is_package_installed $PACKAGE && return
-    APT_INSTALL_QUEUE+=($PACKAGE)
+    apt_queue_check_package $PACKAGE && return
+    APT_PACKAGE_QUEUE+=($PACKAGE)
 }
 
-apt_install_queued_packages() {
-    [[ ${#APT_INSTALL_QUEUE[@]} -gt 0 ]] && apt install ${APT_INSTALL_QUEUE[*]}
-    apt_install_clear_queue
+apt_queue_check_package() {
+    local PACKAGE=$1
+
+    case $APT_QUEUE_ACTION in
+
+        install)
+            apt_is_package_installed $PACKAGE && return 0
+            ;;
+
+        upgrade)
+            apt_is_package_installed $PACKAGE || return 0
+            ;;
+
+    esac
+
+    return 1
 }
 
-apt_install_clear_queue() {
-    APT_INSTALL_QUEUE=()
+apt_action_queued_packages() {
+    local APT_COMMAND=${1:-install}
+    local RETURN_CODE=0
+
+    if [[ ${#APT_PACKAGE_QUEUE[@]} -gt 0 ]]; then
+        apt $APT_COMMAND ${APT_PACKAGE_QUEUE[*]}
+        RETURN_CODE=$?
+    fi
+
+    apt_clear_queue
+
+    return $RETURN_CODE
+}
+
+apt_clear_queue() {
+    APT_PACKAGE_QUEUE=()
 }
 
 apt_install_package_repository_prerequisites() {
     local PACKAGE_LIST=(curl software-properties-common)
     dpkg --compare-versions "1.5" "lt" "$(apt --version | awk '{print $2}')" || PACKAGE_LIST+=(apt-transport-https)
 
-    package_manager_cmd_exec_for_each apt_install_queue_package ${PACKAGE_LIST[@]}
+    package_manager_cmd_exec_for_each apt_PACKAGE_queue_package ${PACKAGE_LIST[@]}
 
-    if [[ ${#APT_INSTALL_QUEUE[*]} -eq 0 ]]; then
-        apt_install_clear_queue
+    if [[ ${#APT_PACKAGE_QUEUE[*]} -eq 0 ]]; then
+        apt_clear_queue
         return 0
     fi
 
     line "Installing prerequisites for adding apt repositories..."
-    apt_install_queued_packages
+    apt_PACKAGE_queued_packages
 
     return 0
 }
