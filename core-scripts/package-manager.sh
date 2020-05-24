@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 INSTALLED_PACKAGE_MANAGERS=()
+LOADED_PACKAGE_MANAGERS=()
 PACKAGE_MANAGER_INITIALIZED=0
 
 RESTRICTED_PACKAGE_MANAGER_GLOBAL_KEY="PACKAGE_mgr"
@@ -11,6 +12,9 @@ init_package_manager_actions() {
     if is_unix; then
         local PACKAGE_MANAGERS=($(get_installed_package_managers))
 
+        # Reset the installed list
+        INSTALLED_PACKAGE_MANAGERS=()
+
         # Loop through each detected package manager
         for PACKAGE_MANAGER in ${PACKAGE_MANAGERS[@]}; do
 
@@ -20,7 +24,16 @@ init_package_manager_actions() {
 
             # Does the file exist
             if [[ -f $CORE_SCRIPTS_DIR/packages/$PACKAGE_MANAGER_FILE ]]; then
-                source $CORE_SCRIPTS_DIR/packages/$PACKAGE_MANAGER_FILE
+
+                # Load the file if it hasn't already been loaded
+                if ! is_package_manager_loaded $PACKAGE_MANAGER_FILE; then
+
+                    # Load the file
+                    source $CORE_SCRIPTS_DIR/packages/$PACKAGE_MANAGER_FILE
+                    LOADED_PACKAGE_MANAGERS+=($PACKAGE_MANAGER_FILE)
+                fi
+
+                # Mark the file as installed
                 INSTALLED_PACKAGE_MANAGERS+=($PACKAGE_MANAGER_CMD)
             fi
         done
@@ -28,6 +41,13 @@ init_package_manager_actions() {
 
     # Mark the system as initialized
     PACKAGE_MANAGER_INITIALIZED=1
+}
+
+update_managed_package_managers() {
+
+    # Reinitialize the detected package manager list
+    PACKAGE_MANAGER_INITIALIZED=0
+    init_package_manager_actions
 }
 
 get_installed_package_managers() {
@@ -93,6 +113,17 @@ package_manager_exists() {
     local PACKAGE_MANAGER=$1
 
     command_exists $PACKAGE_MANAGER
+}
+
+is_package_manager_loaded() {
+    local PACKAGE_MANAGER_FILE=$1
+
+    # Check if the passed parameter exists in the array
+    array_is_valid_entry $PACKAGE_MANAGER_FILE ${LOADED_PACKAGE_MANAGERS[@]}
+    # for PACKAGE_MANAGER in ${LOADED_PACKAGE_MANAGERS[@]}; do
+    #     [[ "$PACKAGE_MANAGER" == "$PACKAGE_MANAGER_FILE" ]] && return 0
+    # done
+    # return 1
 }
 
 is_package_manager_valid() {
