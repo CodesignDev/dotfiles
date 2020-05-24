@@ -10,6 +10,9 @@ cd $DOTFILES_DIR
 # Include core
 source core-scripts/core.sh
 
+# Run some pre-initialization scripts
+DISABLE_HOOKS=1 run_topic_scripts $DOTFILES_DIR \
+    "configure_os.sh"
 # Run bootstrap start hook
 hook_run bootstrap_start
 
