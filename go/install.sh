@@ -13,7 +13,7 @@ if ! $(command_exists go); then
     if $(command_exists brew); then
 
         # Install go
-        restrict_package_managers brew | install_package go
+        packages restrict brew | packages install go
 
     else
 

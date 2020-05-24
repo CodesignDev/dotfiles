@@ -13,7 +13,7 @@ if ! $(command_exists rbenv); then
     if $(command_exists brew); then
 
         # Install via brew (automatically installs ruby-build)
-        restrict_package_managers brew | install_package rbenv
+        packages restrict brew | packages install rbenv
 
     else
 
@@ -58,7 +58,7 @@ if $(command_exists rbenv); then
     if $(command_exists brew); then
 
         # Install default-gems plugins
-        restrict_package_managers brew | install_package rbenv-default-gems
+        packages restrict brew | packages install rbenv-default-gems
 
     else
 

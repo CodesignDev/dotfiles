@@ -13,7 +13,7 @@ if ! $(command_exists pyenv); then
     if $(command_exists brew); then
 
         # Install via brew
-        restrict_package_managers brew | install_package pyenv
+        packages restrict brew | packages install pyenv
 
     else
 
@@ -53,7 +53,7 @@ if $(command_exists pyenv); then
     if $(command_exists brew); then
 
         # Install virtualenv and which-ext plugins
-        restrict_package_managers brew | install_package pyenv-virtualenv pyenv-which-ext
+        packages restrict brew | packages install pyenv-virtualenv pyenv-which-ext
 
     else
 

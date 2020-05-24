@@ -4,5 +4,5 @@
 if ! is_shell_installed zsh; then
 
     # Install the zsh shell
-    install_package zsh
+    packages install zsh
 fi

@@ -4,8 +4,8 @@
 if ! $(command_exists yarn); then
 
     # Add the repo to apt if needed
-    restrict_package_managers apt | add_package_repository "yarn" "https://dl.yarnpkg.com/debian/" "stable" "main" "https://dl.yarnpkg.com/debian/pubkey.gpg"
+    packages restrict apt | packages add_repository "yarn" "https://dl.yarnpkg.com/debian/" "stable" "main" "https://dl.yarnpkg.com/debian/pubkey.gpg"
 
     # Install the yarn command
-    install_package yarn
+    packages install yarn
 fi

@@ -10,7 +10,7 @@ export NVM_DIR="$HOME/.nvm"
 if $(command_exists brew); then
 
     # Check if nvm has been installed via homebrew
-    $(restrict_package_managers brew | is_package_installed nvm) && brew uninstall nvm --force
+    $(packages restrict brew | packages is_installed nvm) && brew uninstall nvm --force
 
 fi
 
