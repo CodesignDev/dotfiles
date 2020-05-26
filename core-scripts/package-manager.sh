@@ -118,23 +118,15 @@ package_manager_exists() {
 is_package_manager_loaded() {
     local PACKAGE_MANAGER_FILE=$1
 
-    # Check if the passed parameter exists in the array
+    # Check if the file passed as already been loaded
     array_is_valid_entry $PACKAGE_MANAGER_FILE ${LOADED_PACKAGE_MANAGERS[@]}
-    # for PACKAGE_MANAGER in ${LOADED_PACKAGE_MANAGERS[@]}; do
-    #     [[ "$PACKAGE_MANAGER" == "$PACKAGE_MANAGER_FILE" ]] && return 0
-    # done
-    # return 1
 }
 
 is_package_manager_valid() {
     local PACKAGE_MANAGER=$1
 
-    # Check if the passed parameter
-    array_is_valid_entry $PACKAGE_MANAGER_FILE ${INSTALLED_PACKAGE_MANAGERS[@]}
-    # for VALID_PACKAGE_MANAGER in ${INSTALLED_PACKAGE_MANAGERS[@]}; do
-    #     [[ "$PACKAGE_MANAGER" == "$VALID_PACKAGE_MANAGER" ]] && return 0
-    # done
-    # return 1
+    # Check if the passed parameter is a valid installed package manager
+    array_is_valid_entry $PACKAGE_MANAGER ${INSTALLED_PACKAGE_MANAGERS[@]}
 }
 
 is_package_manager_restricted() {
@@ -148,10 +140,6 @@ is_package_manager_restricted() {
 
     # Check if this package manager has been restricted
     array_is_valid_entry $REQUESTED_PACKAGE_MANAGER ${FILTERED_PACKAGE_MANAGERS[@]}
-    # for FILTERED_PACKAGE_MANAGER in ${FILTERED_PACKAGE_MANAGERS[@]}; do
-    #     [[ "$REQUESTED_PACKAGE_MANAGER" == "$FILTERED_PACKAGE_MANAGER" ]] && return 0
-    # done
-    # return 1
 }
 
 get_restricted_package_managers() {
@@ -179,9 +167,6 @@ get_restricted_package_managers() {
 
     # Return the list of restricted package managers
     echo ${RESTRICTED_PACKAGE_MANAGERS[@]}
-    # for PACKAGE_MANAGER in ${RESTRICTED_PACKAGE_MANAGERS[@]}; do
-    #     echo $PACKAGE_MANAGER
-    # done
 }
 
 restrict_package_managers() {
