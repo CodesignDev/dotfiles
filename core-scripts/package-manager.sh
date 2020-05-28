@@ -183,7 +183,6 @@ restrict_package_managers() {
 
     # For each passed package manager, add it to our list to pass to the next command
     for PACKAGE_MANAGER in ${PACKAGE_MANAGERS[@]}; do
-        check_package_manager is_valid $PACKAGE_MANAGER || continue
         echo "$RESTRICTED_PACKAGE_MANAGER_GLOBAL_KEY:$PACKAGE_MANAGER"
     done
 }
@@ -205,7 +204,7 @@ get_restricted_package_managers() {
     FILTERED_PACKAGE_MANAGERS=($(filter_package_manager_list ${PASSED_PACKAGE_MANAGERS[@]}))
 
     # Return the list of restricted package managers
-    echo ${PASSED_PACKAGE_MANAGERS[@]}
+    echo ${FILTERED_PACKAGE_MANAGERS[@]}
 }
 
 get_restricted_package_manager_list() {
