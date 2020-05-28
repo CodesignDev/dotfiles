@@ -9,19 +9,20 @@ GOROOT="/usr/local/go"
 # Is go already installed
 if ! $(command_exists go); then
 
-    # If homebrew is installed, manage go through that instead of manually
-    if $(command_exists brew); then
+    # Attempt to install pyenv via brew
+    if ! packages restrict brew | packages install go; then
 
-        # Install go
-        packages restrict brew | packages install go
+        # Check if a previous version of go is installed
+        if [[ -d $GOROOT ]]; then
 
-    else
+            # Delete previous installs
+            line "Removing previous installed versions of go..."
+            sudo_askpass rm -rf $GOROOT
 
-        # Remove any old versions of go
-        [[ -d $GOROOT ]] && sudo_askpass rm -rf $GOROOT
+        fi
 
-        # Download and install go manually
-        line "Installing go..."
+        # Automatic install failed, so we are doing this manually instead
+        line "Locating go version..."
 
         # Temp folder to store the downloaded files
         GO_DL_DIR=$(mktemp -dt golang-dl.XXXXXXXX)
@@ -36,7 +37,7 @@ if ! $(command_exists go); then
         curl -fsSL "$GO_URL" > "$GO_DL_DIR/go$GO_VERSION.tar.gz"
 
         # Extract the downloaded file
-        line "Extracting archive..."
+        line "Installing go v$GO_VERSION..."
         sudo_askpass tar zxf "$GO_DL_DIR/go$GO_VERSION.tar.gz" -C $(dirname $GOROOT)
 
         # Add go to path

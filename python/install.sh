@@ -9,15 +9,10 @@ export PYENV_DIR="$HOME/.pyenv"
 # Check if pyenv is not installed
 if ! $(command_exists pyenv); then
 
-    # If homebrew is installed, install pyenv via brew
-    if $(command_exists brew); then
+    # Attempt to install pyenv via brew
+    if ! packages restrict brew | packages install pyenv; then
 
-        # Install via brew
-        packages restrict brew | packages install pyenv
-
-    else
-
-        # Brew isn't available. Install manually
+        # Install failed. Install manually instead
         line "Installing pyenv..."
 
         # If the directory already exists, remove it, it could be an incomplete install
@@ -49,20 +44,13 @@ if $(command_exists pyenv); then
     # Create plugins directory (this should already exist but double check)
     mkdir -p "$(pyenv root)/plugins"
 
-    # Install plugins via brew if available
-    if $(command_exists brew); then
-
-        # Install virtualenv and which-ext plugins
-        packages restrict brew | packages install pyenv-virtualenv pyenv-which-ext
-
-    else
-
-        # Install virtualenv and which-ext plugins via git
+    # Attempt to install the virtualenv and which-ext plugins via brew, falling back to git clone if it fails
+    packages restrict brew | packages install pyenv-virtualenv ||
         git clone https://github.com/pyenv/pyenv-virtualenv.git "$(pyenv root)/plugins/pyenv-virtualenv"
+    packages restrict brew | packages install pyenv-which-ext ||
         git clone https://github.com/pyenv/pyenv-which-ext.git "$(pyenv root)/plugins/pyenv-which-ext"
-    fi
 
-    # Install default-packages, doctor, and update plugins
+   # Install default-packages, doctor, and update plugins
     git clone https://github.com/jawshooah/pyenv-default-packages.git "$(pyenv root)/plugins/pyenv-default-packages"
     git clone https://github.com/pyenv/pyenv-doctor.git "$(pyenv root)/plugins/pyenv-doctor"
     git clone https://github.com/pyenv/pyenv-update.git "$(pyenv root)/plugins/pyenv-update"

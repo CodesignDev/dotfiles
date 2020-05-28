@@ -9,15 +9,10 @@ export RBENV_DIR="$HOME/.rbenv"
 # Check if rbenv is not installed
 if ! $(command_exists rbenv); then
 
-    # If homebrew is installed, install rbenv via brew
-    if $(command_exists brew); then
+    # Attempt to install pyenv via brew
+    if ! packages restrict brew | packages install rbenv; then
 
-        # Install via brew (automatically installs ruby-build)
-        packages restrict brew | packages install rbenv
-
-    else
-
-        # Brew isn't available. Install manually
+        # Install failed. Install manually instead
         line "Installing rbenv..."
 
         # If the directory already exists, remove it, it could be an incomplete install
@@ -54,17 +49,9 @@ if $(command_exists rbenv); then
     # Create plugins directory (this should already exist but double check)
     mkdir -p "$(rbenv root)/plugins"
 
-    # Install plugins via brew if available
-    if $(command_exists brew); then
-
-        # Install default-gems plugins
-        packages restrict brew | packages install rbenv-default-gems
-
-    else
-
-        # Install default-gems plugin via git
+    # Attempt to install the default-gems plugin via brew, falling back to git clone if it fails
+    packages restrict brew | packages install rbenv-default-gems ||
         git clone https://github.com/rbenv/rbenv-default-gems.git "$(rbenv root)/plugins/rbenv-default-gems"
-    fi
 
     # Install rbenv-each plugin
     git clone https://github.com/rbenv/rbenv-each.git "$(rbenv root)/plugins/rbenv-each"
