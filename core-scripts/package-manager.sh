@@ -26,7 +26,7 @@ init_package_manager_actions() {
             if [[ -f $CORE_SCRIPTS_DIR/packages/$PACKAGE_MANAGER_FILE ]]; then
 
                 # Load the file if it hasn't already been loaded
-                if ! is_package_manager_loaded $PACKAGE_MANAGER_FILE; then
+                if ! check_package_manager is_loaded $PACKAGE_MANAGER_FILE; then
 
                     # Load the file
                     source $CORE_SCRIPTS_DIR/packages/$PACKAGE_MANAGER_FILE
@@ -70,11 +70,14 @@ package_manager_cmd_exec() {
 
     local RETURN_CODE=0
 
+    # Get the list of restricted package managers
+    local RESTRICTED_PACKAGE_MANAGERS=($(get_restricted_package_managers))
+
     # Loop through each installed package manager
     for PACKAGE_MANAGER in ${INSTALLED_PACKAGE_MANAGERS[@]}; do
 
-        # Check if this run is restricted to certain package managers
-        is_package_manager_restricted $PACKAGE_MANAGER && continue
+        # Check if this package manager should be skipped
+        is_package_manager_restricted $PACKAGE_MANAGER ${RESTRICTED_PACKAGE_MANAGERS[@]} || continue
 
         # Call the neccessary function
         PACKAGE_MANAGER_FUNC="${PACKAGE_MANAGER}_${COMMAND}"
@@ -115,58 +118,64 @@ package_manager_exists() {
     command_exists $PACKAGE_MANAGER
 }
 
-is_package_manager_loaded() {
-    local PACKAGE_MANAGER_FILE=$1
+check_package_manager() {
+    local MODE=$1
+    local PACKAGE_MANAGER=$2
 
-    # Check if the file passed as already been loaded
-    array_is_valid_entry $PACKAGE_MANAGER_FILE ${LOADED_PACKAGE_MANAGERS[@]}
+    # Get the list of packages
+    local PACKAGE_MANAGER_LIST=($(get_package_manager_list $MODE))
+
+    # If there are no entries in the list, bail
+    [[ -z $PACKAGE_MANAGER_LIST ]] && return 1
+
+    # Check if the entry is in the array
+    array_is_valid_entry $PACKAGE_MANAGER ${PACKAGE_MANAGER_LIST[@]}
 }
 
-is_package_manager_valid() {
-    local PACKAGE_MANAGER=$1
+get_package_manager_list() {
+    local LIST=$1
+    local PACKAGE_MANAGER_LIST
 
-    # Check if the passed parameter is a valid installed package manager
-    array_is_valid_entry $PACKAGE_MANAGER ${INSTALLED_PACKAGE_MANAGERS[@]}
+    # Get the correct variable
+    case $LIST in
+
+        # Is the script file loaded in
+        is_loaded)
+            PACKAGE_MANAGER_LIST="LOADED_PACKAGE_MANAGERS"
+            ;;
+
+        # Is a valid package manager
+        is_valid)
+            PACKAGE_MANAGER_LIST="INSTALLED_PACKAGE_MANAGERS"
+            ;;
+
+    esac
+
+    # If nothing was selected, just exit without check
+    if [[ -z $PACKAGE_MANAGER_LIST ]]; then
+        echo ""
+        return 1
+    fi
+
+    # Format the variable name and then return the list
+    PACKAGE_MANAGER_LIST="${PACKAGE_MANAGER_LIST}[@]"
+    echo ${!PACKAGE_MANAGER_LIST}
 }
 
 is_package_manager_restricted() {
     if is_interactive input; then
-        return 1
+        return 0
     fi
 
     # Get a list of restricted package managers
-    local FILTERED_PACKAGE_MANAGERS=$(get_restricted_package_managers)
     local REQUESTED_PACKAGE_MANAGER=$1
+    local RESTRICTED_PACKAGE_MANAGERS=(${@:2})
 
-    # Check if this package manager has been restricted
-    array_is_valid_entry $REQUESTED_PACKAGE_MANAGER ${FILTERED_PACKAGE_MANAGERS[@]}
-}
+    # If there are no entries, then there is no restriction
+    [[ ${#RESTRICTED_PACKAGE_MANAGERS[@]} -gt 0 ]] || return 0
 
-get_restricted_package_managers() {
-    is_interactive input && {
-        echo ""
-        return 0
-    }
-
-    # Get the restricted package manager codes that have been passed via stdin
-    local PASSED_PACKAGE_MANAGERS=$(get_stdin)
-
-    # Loop through each code passed
-    local RESTRICTED_PACKAGE_MANAGERS=()
-    for PACKAGE_MANAGER in ${PASSED_PACKAGE_MANAGERS[@]}; do
-
-        # Get the key and command from the code
-        local PACKAGE_MANAGER_KEY=$(echo $PACKAGE_MANAGER | cut -f 1 -d :)
-        local PACKAGE_MANAGER_CMD=$(echo $PACKAGE_MANAGER | cut -f 2 -d :)
-
-        # Check if the key matches our global pattern and add the code to the list
-        if [[ "$PACKAGE_MANAGER_KEY" == "$RESTRICTED_PACKAGE_MANAGER_GLOBAL_KEY" ]]; then
-            is_package_manager_valid $PACKAGE_MANAGER_CMD && RESTRICTED_PACKAGE_MANAGERS+=($PACKAGE_MANAGER_CMD)
-        fi
-    done
-
-    # Return the list of restricted package managers
-    echo ${RESTRICTED_PACKAGE_MANAGERS[@]}
+    # Check if this package manager is in the restricted list
+    array_is_valid_entry $REQUESTED_PACKAGE_MANAGER ${RESTRICTED_PACKAGE_MANAGERS[@]}
 }
 
 restrict_package_managers() {
@@ -174,7 +183,89 @@ restrict_package_managers() {
 
     # For each passed package manager, add it to our list to pass to the next command
     for PACKAGE_MANAGER in ${PACKAGE_MANAGERS[@]}; do
-        is_package_manager_valid $PACKAGE_MANAGER || continue
+        check_package_manager is_valid $PACKAGE_MANAGER || continue
         echo "$RESTRICTED_PACKAGE_MANAGER_GLOBAL_KEY:$PACKAGE_MANAGER"
     done
+}
+
+get_restricted_package_managers() {
+    if is_interactive input; then
+        echo ""
+        return 0
+    fi
+
+    # Get the restricted package manager codes that have been passed via stdin
+    local PASSED_PACKAGE_MANAGERS=$(get_stdin)
+    local FILTERED_PACKAGE_MANAGERS
+
+    # Process the list of package managers
+    PASSED_PACKAGE_MANAGERS=($(get_restricted_package_manager_list ${PASSED_PACKAGE_MANAGERS[@]}))
+
+    # Get the list of package managers that match our filter
+    FILTERED_PACKAGE_MANAGERS=($(filter_package_manager_list ${PASSED_PACKAGE_MANAGERS[@]}))
+
+    # Return the list of restricted package managers
+    echo ${PASSED_PACKAGE_MANAGERS[@]}
+}
+
+get_restricted_package_manager_list() {
+    local PACKAGE_MANAGER_LIST=($@)
+
+    # Loop through each code passed
+    local RESTRICTED_PACKAGE_MANAGERS=()
+    for PACKAGE_MANAGER in ${PACKAGE_MANAGER_LIST[@]}; do
+
+        # Get the key and command from the code
+        local PACKAGE_MANAGER_KEY=$(echo $PACKAGE_MANAGER | cut -f 1 -d :)
+        local PACKAGE_MANAGER_CMD=$(echo $PACKAGE_MANAGER | cut -f 2 -d :)
+
+        # Check if the key matches our global pattern and add the code to the list
+        if [[ "$PACKAGE_MANAGER_KEY" == "$RESTRICTED_PACKAGE_MANAGER_GLOBAL_KEY" ]]; then
+            RESTRICTED_PACKAGE_MANAGERS+=($PACKAGE_MANAGER_CMD)
+        fi
+    done
+
+    # Return the list of restricted package managers
+    echo ${RESTRICTED_PACKAGE_MANAGERS[@]}
+}
+
+filter_package_manager_list() {
+    local FILTER_LIST=($1)
+
+    local NEGATE_MODE=0
+
+    # Get the list of valid package managers
+    local PACKAGE_MANAGER_LIST=($(get_package_manager_list is_valid))
+    local FILTERED_PACKAGE_MANAGER_LIST=()
+
+    local FILTER_ENTRIES=()
+
+    # Check for any negative flags
+    for ENTRY in ${FILTER_LIST[@]}; do
+        [[ "$ENTRY" == '!'* ]] && NEGATE_MODE=1
+    done
+
+    # Get the correct filter list depending on the mode
+    for ENTRY in ${FILTER_LIST[@]}; do # apt
+        if [[ "$NEGATE_MODE" == "1" ]]; then # false
+            [[ "$ENTRY" == '!'* ]] || continue
+        else
+            [[ "$ENTRY" == '!'* ]] && continue # skips
+        fi
+        ENTRY=$(echo $ENTRY | sed -r 's/!//g')
+        FILTER_ENTRIES+=($ENTRY) # Adds apt
+    done
+
+    # Loop through each entry in the package manager list and check it against the filter list
+    for PACKAGE_MANAGER in ${PACKAGE_MANAGER_LIST[@]}; do
+        if [[ "$NEGATE_MODE" == "1" ]]; then
+            array_is_valid_entry $PACKAGE_MANAGER ${FILTER_ENTRIES[@]} && continue
+        else
+            array_is_valid_entry $PACKAGE_MANAGER ${FILTER_ENTRIES[@]} || continue
+        fi
+        FILTERED_PACKAGE_MANAGER_LIST+=($PACKAGE_MANAGER)
+    done
+
+    # Return the list of filtered package managers
+    echo ${FILTERED_PACKAGE_MANAGER_LIST[@]}
 }
