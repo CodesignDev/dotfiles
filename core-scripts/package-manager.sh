@@ -221,8 +221,8 @@ restrict_package_managers() {
 
     # For each passed package manager, add it to our list to pass to the next command
     for PACKAGE_MANAGER in ${PACKAGE_MANAGERS[@]}; do
-        CURRENT_PACKAGE=$(echo $PACKAGE_MANAGER | sed -r 's/!//g')
-        check_package_manager is_supported $PACKAGE_MANAGER || continue
+        CURRENT_PACKAGE=$(clean_package_manager_name $PACKAGE_MANAGER)
+        check_package_manager is_supported $CURRENT_PACKAGE || continue
         echo "$RESTRICTED_PACKAGE_MANAGER_GLOBAL_KEY:$PACKAGE_MANAGER"
     done
 }
@@ -291,7 +291,7 @@ filter_package_manager_list() {
         else
             [[ "$ENTRY" == '!'* ]] && continue # skips
         fi
-        ENTRY=$(echo $ENTRY | sed -r 's/!//g')
+        ENTRY=$(clean_package_manager_name $ENTRY)
         FILTER_ENTRIES+=($ENTRY) # Adds apt
     done
 
