@@ -5,15 +5,23 @@ SUPPORTED_PACKAGE_MANAGER_DATA=()
 INSTALLED_PACKAGE_MANAGERS=()
 LOADED_PACKAGE_MANAGERS=()
 PACKAGE_MANAGER_INITIALIZED=0
-PACKAGE_MANAGER_LIST_GENERATED=0
+PACKAGE_MANAGER_LOADED=0
 
 RESTRICTED_PACKAGE_MANAGER_GLOBAL_KEY="PACKAGE_mgr"
 init_package_manager_actions() {
     [[ $PACKAGE_MANAGER_INITIALIZED == 1 ]] && return
 
+    # Variables
+    local PACKAGE_MANAGERS
+    local PACKAGE_MANAGER_CMD
+    local PACKAGE_MANAGER_FILE
+
+    # Load supported package managers
+    load_supported_package_managers
+
     # Package managers only seem to be on unix based systems (sorry windows)
     if is_unix; then
-        local PACKAGE_MANAGERS=($(get_installed_package_managers))
+        PACKAGE_MANAGERS=($(get_installed_package_managers))
 
         # Reset the installed list
         INSTALLED_PACKAGE_MANAGERS=()
@@ -22,8 +30,8 @@ init_package_manager_actions() {
         for PACKAGE_MANAGER in ${PACKAGE_MANAGERS[@]}; do
 
             # Get the command and the file
-            local PACKAGE_MANAGER_CMD=$(echo $PACKAGE_MANAGER | cut -f 1 -d :)
-            local PACKAGE_MANAGER_FILE=$(echo $PACKAGE_MANAGER | cut -f 2 -d :)
+            PACKAGE_MANAGER_CMD=$(echo $PACKAGE_MANAGER | cut -f 1 -d :)
+            PACKAGE_MANAGER_FILE=$(echo $PACKAGE_MANAGER | cut -f 2 -d :)
 
             # Does the file exist
             if [[ -f $CORE_SCRIPTS_DIR/packages/$PACKAGE_MANAGER_FILE ]]; then
@@ -53,10 +61,10 @@ update_managed_package_managers() {
     init_package_manager_actions
 }
 
-get_supported_package_managers() {
+load_supported_package_managers() {
 
-    # Check if we have already generated the list of package managers
-    if [[ "$PACKAGE_MANAGER_LIST_GENERATED" == "0" ]]; then
+    # Check if we have already loaded the list of package managers
+    if [[ "$PACKAGE_MANAGER_LOADED" == "0" ]]; then
 
         # Loop through each file in the packages folder
         for PACKAGE_MANAGER in $CORE_SCRIPTS_DIR/packages/*.sh; do
@@ -71,9 +79,14 @@ get_supported_package_managers() {
         done
 
         # Set flag saying that the list has been generated
-        PACKAGE_MANAGER_LIST_GENERATED=1
-
+        PACKAGE_MANAGER_LOADED=1
     fi
+}
+
+get_supported_package_managers() {
+
+    # Load the supported package manager list if it hasn't already been done
+    [[ "$PACKAGE_MANAGER_LOADED" == "0" ]] && load_supported_package_managers
 
     # Print the list of supported package managers
     echo ${SUPPORTED_PACKAGE_MANAGER_DATA[@]}
@@ -285,14 +298,14 @@ filter_package_manager_list() {
     done
 
     # Get the correct filter list depending on the mode
-    for ENTRY in ${FILTER_LIST[@]}; do # apt
-        if [[ "$NEGATE_MODE" == "1" ]]; then # false
+    for ENTRY in ${FILTER_LIST[@]}; do
+        if [[ "$NEGATE_MODE" == "1" ]]; then
             [[ "$ENTRY" == '!'* ]] || continue
         else
-            [[ "$ENTRY" == '!'* ]] && continue # skips
+            [[ "$ENTRY" == '!'* ]] && continue
         fi
         ENTRY=$(clean_package_manager_name $ENTRY)
-        FILTER_ENTRIES+=($ENTRY) # Adds apt
+        FILTER_ENTRIES+=($ENTRY)
     done
 
     # Loop through each entry in the package manager list and check it against the filter list
