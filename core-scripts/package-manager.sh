@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 
+SUPPORTED_PACKAGE_MANAGERS=()
+SUPPORTED_PACKAGE_MANAGER_DATA=()
 INSTALLED_PACKAGE_MANAGERS=()
 LOADED_PACKAGE_MANAGERS=()
 PACKAGE_MANAGER_INITIALIZED=0
+PACKAGE_MANAGER_LIST_GENERATED=0
 
 RESTRICTED_PACKAGE_MANAGER_GLOBAL_KEY="PACKAGE_mgr"
 init_package_manager_actions() {
@@ -50,17 +53,46 @@ update_managed_package_managers() {
     init_package_manager_actions
 }
 
+get_supported_package_managers() {
+
+    # Check if we have already generated the list of package managers
+    if [[ "$PACKAGE_MANAGER_LIST_GENERATED" == "0" ]]; then
+
+        # Loop through each file in the packages folder
+        for PACKAGE_MANAGER in $CORE_SCRIPTS_DIR/packages/*.sh; do
+
+            # Get the file name and command
+            local PACKAGE_MANAGER_FILE=$(basename $PACKAGE_MANAGER)
+            local PACKAGE_MANAGER_CMD=$(get_package_manager_cmd $PACKAGE_MANAGER)
+
+            # Add the file to the list of supported package managers
+            SUPPORTED_PACKAGE_MANAGERS+=($PACKAGE_MANAGER_CMD)
+            SUPPORTED_PACKAGE_MANAGER_DATA+=($PACKAGE_MANAGER_CMD:$PACKAGE_MANAGER_FILE)
+        done
+
+        # Set flag saying that the list has been generated
+        PACKAGE_MANAGER_LIST_GENERATED=1
+
+    fi
+
+    # Print the list of supported package managers
+    echo ${SUPPORTED_PACKAGE_MANAGER_DATA[@]}
+}
+
 get_installed_package_managers() {
 
-    # Loop through each file in the packages folder
-    for PACKAGE_MANAGER in $CORE_SCRIPTS_DIR/packages/*.sh; do
+    # Get the list of supported package managers
+    local PACKAGE_MANAGERS=$(get_supported_package_managers)
 
-        # Get the file name and command
-        local PACKAGE_MANAGER_FILE=$(basename $PACKAGE_MANAGER)
-        local PACKAGE_MANAGER_CMD=$(get_package_manager_cmd $PACKAGE_MANAGER)
+    # Loop through each file in the packages folder
+    for PACKAGE_MANAGER in ${PACKAGE_MANAGERS[@]}; do
+
+        # Get the command and the file
+        local PACKAGE_MANAGER_CMD=$(echo $PACKAGE_MANAGER | cut -f 1 -d :)
+        local PACKAGE_MANAGER_FILE=$(echo $PACKAGE_MANAGER | cut -f 2 -d :)
 
         # Check if the command exists on the system
-        package_manager_exists $PACKAGE_MANAGER_CMD && echo $PACKAGE_MANAGER_CMD:$PACKAGE_MANAGER_FILE
+        package_manager_exists $PACKAGE_MANAGER_CMD && echo $PACKAGE_MANAGER
     done
 }
 
@@ -139,6 +171,11 @@ get_package_manager_list() {
     # Get the correct variable
     case $LIST in
 
+        # Is the package manager supported by this system
+        is_supported)
+            PACKAGE_MANAGER_LIST="SUPPORTED_PACKAGE_MANAGERS"
+            ;;
+
         # Is the script file loaded in
         is_loaded)
             PACKAGE_MANAGER_LIST="LOADED_PACKAGE_MANAGERS"
@@ -180,9 +217,12 @@ is_package_manager_restricted() {
 
 restrict_package_managers() {
     local PACKAGE_MANAGERS=($@)
+    local CURRENT_PACKAGE
 
     # For each passed package manager, add it to our list to pass to the next command
     for PACKAGE_MANAGER in ${PACKAGE_MANAGERS[@]}; do
+        CURRENT_PACKAGE=$(echo $PACKAGE_MANAGER | sed -r 's/!//g')
+        check_package_manager is_supported $PACKAGE_MANAGER || continue
         echo "$RESTRICTED_PACKAGE_MANAGER_GLOBAL_KEY:$PACKAGE_MANAGER"
     done
 }
@@ -267,4 +307,14 @@ filter_package_manager_list() {
 
     # Return the list of filtered package managers
     echo ${FILTERED_PACKAGE_MANAGER_LIST[@]}
+}
+
+clean_package_manager_name() {
+    local PACKAGE_MANAGER=$1
+
+    # Clean the name
+    PACKAGE_MANAGER=$(echo $PACKAGE_MANAGER | sed -r 's/!//g')
+
+    # REturn the name
+    echo $PACKAGE_MANAGER
 }
