@@ -14,6 +14,10 @@ source $CORE_SCRIPTS_DIR/debug.sh
 # Set up debug
 debug_init $@
 
+# Some core functions
+source $CORE_SCRIPTS_DIR/commands.sh
+source $CORE_SCRIPTS_DIR/functions.sh
+
 # Include terminal related libraries
 source $CORE_SCRIPTS_DIR/shell.sh
 source $CORE_SCRIPTS_DIR/colours.sh
@@ -46,7 +50,6 @@ detect_os
 detect_arch
 
 # Incldue our other core libraries
-source $CORE_SCRIPTS_DIR/commands.sh
 source $CORE_SCRIPTS_DIR/sudo.sh
 source $CORE_SCRIPTS_DIR/topics.sh
 
