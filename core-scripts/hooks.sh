@@ -6,21 +6,14 @@ CORE_HOOKS=(
     cleanup
 )
 ACTIVE_HOOKS=()
+ACTIVE_HOOK_ACTIONS=()
 
 # Are hooks disabled
 DISABLED_HOOKS_GLOBAL=${DISABLE_HOOKS:-0}
 
 hooks_init() {
-    local HOOK_VAR_NAME
-
-    if [[ ${#ACTIVE_HOOKS[@]} -gt 0 ]]; then
-        for HOOK in ${ACTIVE_HOOKS[@]}; do
-            HOOK_VAR_NAME=$(hook_get_var_name $HOOK)
-            unset $HOOK_VAR_NAME
-        done
-    fi
-
     ACTIVE_HOOKS=()
+    ACTIVE_HOOK_ACTIONS=()
 }
 
 hook() {
@@ -99,9 +92,6 @@ hook_register() {
 
     # Add the hook to the list
     ACTIVE_HOOKS+=($HOOK)
-
-    # Create the variable that holds the actions
-    hook_register_action_array $HOOK
 }
 
 hook_register_action() {
@@ -118,96 +108,26 @@ hook_register_action() {
 hook_get_actions() {
     local HOOK=$1
 
-    # Get the variable name for the hook
-    local HOOK_VAR=$(hook_get_var_name $HOOK)
+    local FILTERED_ACTIONS
 
     # If the hook doesn't exist, bail
     hook_exists $HOOK || return 1
 
-    # Check if the variable exists
-    hook_var_exists $HOOK_VAR || return 1
+    # Filter the hook action list by our hook
+    IFS=$'\n'; FILTERED_ACTIONS=($(printf '%s\n' "${ACTIVE_HOOK_ACTIONS[@]}" | sed "/^$HOOK\/\//"'!d'))
+
+    # Remove the prefixes from the actions
+    FILTERED_ACTIONS=($(echo "${FILTERED_ACTIONS[@]##*/}"))
 
     # Return the contents of the variable
-    echo ${!HOOK_VAR}
+    echo ${FILTERED_ACTIONS[@]}
     return 0
-}
-
-hook_get_var_name() {
-    local HOOK_NAME=$1
-    local HOOK_PREFIX="DOTFILES_HOOK_VAR"
-    local HOOK
-
-    HOOK_NAME=$(echo $HOOK_NAME | tr '/\\\-' '_')
-    HOOK="${HOOK_PREFIX}_${HOOK_NAME}"
-
-    echo $HOOK
-    return 0
-}
-
-hook_var_exists() {
-    local VAR=$1
-
-    [[ -n ${!VAR+x} ]]
-}
-
-hook_register_action_array() {
-    local HOOK=$1
-
-    # Get the variable for the hook
-    local HOOK_VAR=$(hook_get_var_name $HOOK)
-
-    # Check if the variable exists
-    hook_var_exists $HOOK_VAR && return 0
-
-    # Execute the create variable command
-    hook_evaluate_variable create "$HOOK_VAR"
 }
 
 hook_add_action() {
     local HOOK=$1
     local ACTION=$2
 
-    # Get the variable for this hook
-    local HOOK_VAR=$(hook_get_var_name $HOOK)
-
-    # If the hook variable doesn't exist, bail
-    hook_var_exists $HOOK_VAR || return 0
-
-    # Execute the add action command
-    hook_evaluate_variable add "$HOOK_VAR" "$ACTION"
-}
-
-hook_evaluate_variable() {
-    local MODE=$1
-    local VARIABLE=$2
-    local ACTIONS=(${@:3})
-
-    local CMDLINE
-
-    # Determine the mode
-    case $MODE in
-
-        # Create the array
-        create)
-            CMDLINE="${VARIABLE}=()"
-            ;;
-
-        # Add an item to the array
-        add)
-            CMDLINE="${VARIABLE}+=(%s)"
-            ;;
-
-        # Default is no mode
-        *)
-            return 1
-            ;;
-
-    esac
-
-    # Add the actions to the variable
-    CMDLINE=$(printf "$CMDLINE" "${ACTIONS[@]}")
-
-    # Evaluate the command.
-    # Eval is used here instead of declare because the variable needs to be in the global scope and not local scope
-    eval "$CMDLINE"
+    # Add the action to the list prefixed with the hook
+    ACTIVE_HOOK_ACTIONS+=("$HOOK//$ACTION")
 }
