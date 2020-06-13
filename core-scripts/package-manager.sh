@@ -134,6 +134,8 @@ package_manager_cmd_exec() {
         # If the command executed successfully, then exit, otherwise move to the next
         [[ $RETURN_CODE -eq 0 ]] && return 0
     done
+
+    return 1
 }
 
 package_manager_cmd_exec_for_each() {
@@ -220,9 +222,6 @@ is_package_manager_restricted() {
     # Get a list of restricted package managers
     local REQUESTED_PACKAGE_MANAGER=$1
     local RESTRICTED_PACKAGE_MANAGERS=(${@:2})
-
-    # If there are no entries, then there is no restriction
-    [[ ${#RESTRICTED_PACKAGE_MANAGERS[@]} -gt 0 ]] || return 0
 
     # Check if this package manager is in the restricted list
     array_is_valid_entry $REQUESTED_PACKAGE_MANAGER ${RESTRICTED_PACKAGE_MANAGERS[@]}
