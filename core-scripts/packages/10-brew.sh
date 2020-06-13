@@ -54,6 +54,22 @@ brew_upgrade_packages() {
     done
 }
 
+brew_remove_packages() {
+    local PACKAGES=$1
+
+    package_manager_exists brew || return
+
+    for PACKAGE in ${PACKAGES[@]}; do
+        brew_is_package_installed $PACKAGE || continue
+
+        brew uninstall --force $PACKAGE
+    done
+}
+
+brew_purge_packages() {
+    brew_remove_packages $@
+}
+
 brew_add_package_repository() {
     local REPOSITORY=$1
 

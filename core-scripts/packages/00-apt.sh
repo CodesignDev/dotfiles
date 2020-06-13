@@ -22,6 +22,10 @@ apt() {
             [[ $APT_INITIAL_UPDATE_DONE == 0 ]] && APT_INITIAL_UPDATE_DONE=1
             COMMAND_ARGS+="-y"
             ;;
+        remove | purge)
+            COMMAND_ARGS+="-y"
+            [[ "$COMMAND" == "purge" ]] && COMMAND_ARGS+="--purge"
+            COMMAND="remove"
         *)
             ;;
     esac
@@ -57,6 +61,24 @@ apt_upgrade_packages() {
         APT_QUEUE_ACTION=upgrade package_manager_cmd_exec_for_each apt_queue_package ${PACKAGES[@]}
         apt_action_queued_packages upgrade
     fi
+}
+
+apt_remove_packages() {
+    local PACKAGES=$@
+
+    package_manager_exists apt || return
+
+    APT_QUEUE_ACTION=remove package_manager_cmd_exec_for_each apt_queue_package ${PACKAGES[@]}
+    apt_action_queued_packages remove
+}
+
+apt_purge_packages() {
+    local PACKAGES=$@
+
+    package_manager_exists apt || return
+
+    APT_QUEUE_ACTION=remove package_manager_cmd_exec_for_each apt_queue_package ${PACKAGES[@]}
+    apt_action_queued_packages purge
 }
 
 apt_add_package_repository() {
@@ -114,13 +136,15 @@ apt_queue_package() {
 apt_queue_check_package() {
     local PACKAGE=$1
 
+    local APT_QUEUE_ACTION=${APT_QUEUE_ACTION:-install}
+
     case $APT_QUEUE_ACTION in
 
         install)
             apt_is_package_installed $PACKAGE && return 0
             ;;
 
-        upgrade)
+        upgrade | remove)
             apt_is_package_installed $PACKAGE || return 0
             ;;
 

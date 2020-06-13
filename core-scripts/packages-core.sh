@@ -29,6 +29,14 @@ packages() {
             PACKAGE_COMMAND=upgrade_packages
             ;;
 
+        remove)
+            PACKAGE_COMMAND=remove_packages
+            ;;
+
+        purge)
+            PACKAGE_COMMAND=purge_packages
+            ;;
+
         # Add package repository
         add_repository)
             PACKAGE_COMMAND=add_repository
