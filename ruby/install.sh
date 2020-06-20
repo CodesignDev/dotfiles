@@ -7,7 +7,7 @@ DIR="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 export RBENV_DIR="$HOME/.rbenv"
 
 # Check if rbenv is not installed
-if ! $(command_exists rbenv); then
+if ! command_exists rbenv; then
 
     # Attempt to install pyenv via brew
     if ! packages restrict brew | packages install rbenv; then
@@ -44,7 +44,7 @@ else
 fi
 
 # Install some rbenv plugins
-if $(command_exists rbenv); then
+if command_exists rbenv; then
 
     # Create plugins directory (this should already exist but double check)
     mkdir -p "$(rbenv root)/plugins"

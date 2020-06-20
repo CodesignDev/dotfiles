@@ -7,7 +7,7 @@ DIR="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 export PYENV_DIR="$HOME/.pyenv"
 
 # Check if pyenv is not installed
-if ! $(command_exists pyenv); then
+if ! command_exists pyenv; then
 
     # Attempt to install pyenv via brew
     if ! packages restrict brew | packages install pyenv; then
@@ -39,7 +39,7 @@ else
 fi
 
 # Install some pyenv plugins
-if $(command_exists pyenv); then
+if command_exists pyenv; then
 
     # Create plugins directory (this should already exist but double check)
     mkdir -p "$(pyenv root)/plugins"

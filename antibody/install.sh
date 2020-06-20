@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # Is antibody installed
-if ! $(command_exists antibody); then
+if ! command_exists antibody; then
 
     # Install a homebrew tap
     packages restrict brew | packages add_repository getantibody/tap

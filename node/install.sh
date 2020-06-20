@@ -10,7 +10,7 @@ export NVM_DIR="$HOME/.nvm"
 packages restrict brew | packages remove nvm
 
 # Is nvm already installed
-if $(command_exists nvm); then
+if command_exists nvm; then
 
     # NVM is installed, so attempt to create the nvm directory. If the directory already exists, this will just fail silently
     mkdir -p $NVM_DIR 2>/dev/null

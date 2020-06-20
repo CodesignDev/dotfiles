@@ -4,7 +4,7 @@
 DIR="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Install latest ruby version
-if $(command_exists pyenv); then
+if command_exists pyenv; then
 
     # Get the latest python 2 and 3 versions currently availble
     PYTHON_3_LATEST_VERSION=$(pyenv install --list | sed 's/^  //' | grep -v - | grep -v 'dev\|a\|b' | grep '^3' | tail -1)

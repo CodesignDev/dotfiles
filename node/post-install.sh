@@ -4,7 +4,7 @@
 DIR="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # If nvm is installed and is available, install the necessary node versions
-if $(command_exists nvm); then
+if command_exists nvm; then
 
     # Get the node versions for latest and lts
     NODE_LATEST_VERSION=$(nvm_remote_version | awk '{print $1}')

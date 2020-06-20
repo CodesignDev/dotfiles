@@ -4,7 +4,7 @@
 DIR="$(cd -P "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 # Install latest ruby version
-if $(command_exists rbenv); then
+if command_exists rbenv; then
 
     # Get the latest ruby version currently availble
     RUBY_LATEST_VERSION=$(rbenv install --list | grep -v - | tail -1)
