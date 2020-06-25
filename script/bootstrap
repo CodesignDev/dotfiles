@@ -12,18 +12,17 @@ source core-scripts/core.sh
 
 # Run some pre-initialization scripts
 DISABLE_HOOKS=1 run_topic_scripts $DOTFILES_DIR \
-    "configure_os.sh" \
-    "install_homebrew.sh" \
-    "configure_git.sh"
+    "configure-os.sh" \
+    "install-homebrew.sh" \
+    "configure-git.sh"
 
 # Run bootstrap start hook
 hook_run bootstrap_start
 
-# Run all prerequisite scripts
-run_topic_scripts $DOTFILES_DIR "prerequisites.sh"
-
-# Run the bootstrap script in all topic folders
-run_topic_scripts $DOTFILES_DIR "bootstrap.sh"
+# Run all prerequisite and bootstrap scripts
+run_topic_scripts $DOTFILES_DIR \
+    "prerequisites.sh" \
+    "bootstrap.sh"
 
 # Run the bootstrap end hook
 hook_run bootstrap_end
