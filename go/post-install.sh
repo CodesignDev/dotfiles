@@ -3,7 +3,7 @@
 GO_SRC_PATH=${GOPATH:-"$PROJECTS_DIR/go"}
 
 # Check if go is callable
-if $(command_exists go); then
+if command_exists go; then
 
     # Create the go user paths
     [[ -d $GO_SRC_PATH ]] && mkdir -p $GO_SRC_PATH
