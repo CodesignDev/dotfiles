@@ -23,9 +23,10 @@ apt() {
             COMMAND_ARGS+="-y"
             ;;
         remove | purge)
-            COMMAND_ARGS+="-y"
             [[ "$COMMAND" == "purge" ]] && COMMAND_ARGS+="--purge"
             COMMAND="remove"
+            COMMAND_ARGS+="-y"
+            ;;
         *)
             ;;
     esac
