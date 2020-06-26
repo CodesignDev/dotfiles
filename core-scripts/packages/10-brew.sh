@@ -3,7 +3,7 @@
 BREW_INITIAL_UPDATE_DONE=0
 
 brew() {
-    local BREW_CMD=\brew
+    local BREW_CMD=$(get_command_path brew)
     local COMMAND=$1
     local ARGS=(${@:2})
 
@@ -13,6 +13,7 @@ brew() {
             ;;
         update)
             [[ $BREW_INITIAL_UPDATE_DONE == 0 ]] && BREW_INITIAL_UPDATE_DONE=1
+            ;;
         *)
             ;;
     esac
@@ -25,7 +26,7 @@ brew_install_package() {
 
     package_manager_exists brew || return
 
-    for PACKAGE IN ${PACKAGES[@]}; do
+    for PACKAGE in ${PACKAGES[@]}; do
         brew_is_package_installed $PACKAGE && continue
 
         brew install $PACKAGE
@@ -47,7 +48,7 @@ brew_upgrade_packages() {
 
     [[ ${#PACKAGES[@]} -eq 0 ]] && brew upgrade
 
-    for PACKAGE IN ${PACKAGES[@]}; do
+    for PACKAGE in ${PACKAGES[@]}; do
         brew_is_package_installed $PACKAGE || continue
 
         brew upgrade $PACKAGE
