@@ -38,8 +38,8 @@ packages() {
             ;;
 
         # Add package repository
-        add_repository)
-            PACKAGE_COMMAND=add_repository
+        add_repo | add_repository | add_package_repository)
+            PACKAGE_COMMAND=add_package_repository
             ;;
 
         # Is package installed?

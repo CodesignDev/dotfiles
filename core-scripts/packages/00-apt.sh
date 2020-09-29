@@ -16,16 +16,16 @@ apt() {
         install | upgrade)
             [[ $APT_INITIAL_UPDATE_DONE == 0 ]] && apt update
             COMMAND_PREFIX="DEBIAN_FRONTEND=noninteractive "
-            COMMAND_ARGS+="-y"
+            COMMAND_ARGS+=" -y"
             ;;
         update)
             [[ $APT_INITIAL_UPDATE_DONE == 0 ]] && APT_INITIAL_UPDATE_DONE=1
-            COMMAND_ARGS+="-y"
+            COMMAND_ARGS+=" -y"
             ;;
         remove | purge)
             [[ "$COMMAND" == "purge" ]] && COMMAND_ARGS+="--purge"
             COMMAND="remove"
-            COMMAND_ARGS+="-y"
+            COMMAND_ARGS+=" -y"
             ;;
         *)
             ;;
