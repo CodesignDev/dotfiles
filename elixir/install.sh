@@ -17,6 +17,8 @@ if command_exists asdf; then
 
     # Install some prereqs for building erlang
     line "Installing some pre-requisites for erlang..."
-    packages restrict apt | packages install autoconf m4 libncurses5-dev libwxgtk3.0-dev libgl1-mesa-dev libglu1-mesa-dev libpng-dev libssh-dev unixodbc-dev
+    packages restrict apt | packages install autoconf m4 libncurses5-dev libpng-dev libssh-dev unixodbc-dev
     packages restrict brew | packages install autoconf wxmac
+
+    is_wsl || packages restrict apt | packages install libwxgtk3.0-dev libwxgtk3.0-gtk3-dev libgl1-mesa-dev libglu1-mesa-dev
 fi
