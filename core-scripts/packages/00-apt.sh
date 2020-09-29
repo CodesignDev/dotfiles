@@ -181,7 +181,7 @@ apt_install_package_repository_prerequisites() {
     local PACKAGE_LIST=(curl software-properties-common)
     dpkg --compare-versions "1.5" "lt" "$(apt --version | awk '{print $2}')" || PACKAGE_LIST+=(apt-transport-https)
 
-    package_manager_cmd_exec_for_each apt_PACKAGE_queue_package ${PACKAGE_LIST[@]}
+    package_manager_cmd_exec_for_each apt_queue_package ${PACKAGE_LIST[@]}
 
     if [[ ${#APT_PACKAGE_QUEUE[*]} -eq 0 ]]; then
         apt_clear_queue
@@ -189,7 +189,7 @@ apt_install_package_repository_prerequisites() {
     fi
 
     line "Installing prerequisites for adding apt repositories..."
-    apt_PACKAGE_queued_packages
+    apt_action_queued_packages install
 
     return 0
 }
