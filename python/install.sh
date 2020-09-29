@@ -55,3 +55,12 @@ if command_exists pyenv; then
     git clone https://github.com/pyenv/pyenv-doctor.git "$(pyenv root)/plugins/pyenv-doctor"
     git clone https://github.com/pyenv/pyenv-update.git "$(pyenv root)/plugins/pyenv-update"
 fi
+
+# Install some prerequisites needed to build ruby
+if command_exists pyenv; then
+
+    line "Installing some pre-requisites for python..."
+    packages restrict apt | packages install make build-essential libssl-dev zlib1g-dev libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm libncurses5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
+    packages restrict brew | packages install openssl readline sqlite3 xz zlib
+
+fi
