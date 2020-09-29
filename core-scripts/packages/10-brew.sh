@@ -7,17 +7,6 @@ brew() {
     local COMMAND=$1
     local ARGS=(${@:2})
 
-    case $COMMAND in
-        install | upgrade)
-            [[ $BREW_INITIAL_UPDATE_DONE == 0 ]] && brew update
-            ;;
-        update)
-            [[ $BREW_INITIAL_UPDATE_DONE == 0 ]] && BREW_INITIAL_UPDATE_DONE=1
-            ;;
-        *)
-            ;;
-    esac
-
     $BREW_CMD $COMMAND ${ARGS[*]}
 }
 
@@ -92,4 +81,11 @@ brew_list_package_files() {
 
     brew_is_package_installed $PACKAGE || return
     brew list -v $PACKAGE 2>/dev/null
+}
+
+brew_perform_initial_update() {
+    if [[ $BREW_INITIAL_UPDATE_DONE == 0 ]]; then
+        brew update
+        BREW_INITIAL_UPDATE_DONE=1
+    fi
 }

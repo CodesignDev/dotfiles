@@ -7,6 +7,8 @@ LOADED_PACKAGE_MANAGERS=()
 PACKAGE_MANAGER_INITIALIZED=0
 PACKAGE_MANAGER_LOADED=0
 
+PACKAGE_MANAGER_INITIAL_UPDATE_COMMAND="perform_initial_update"
+
 RESTRICTED_PACKAGE_MANAGER_GLOBAL_KEY="PACKAGE_mgr"
 init_package_manager_actions() {
     [[ $PACKAGE_MANAGER_INITIALIZED == 1 ]] && return
@@ -123,6 +125,10 @@ package_manager_cmd_exec() {
 
         # Check if this package manager should be skipped
         is_package_manager_restricted $PACKAGE_MANAGER ${RESTRICTED_PACKAGE_MANAGERS[@]} || continue
+
+        # Perform the initial update for the package manager
+        PACKAGE_MANAGER_UPDATE_FUNC="${PACKAGE_MANAGER}_${PACKAGE_MANAGER_INITIAL_UPDATE_COMMAND}"
+        $PACKAGE_MANAGER_UPDATE_FUNC
 
         # Call the neccessary function
         PACKAGE_MANAGER_FUNC="${PACKAGE_MANAGER}_${COMMAND}"

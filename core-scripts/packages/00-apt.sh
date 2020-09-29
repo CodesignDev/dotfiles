@@ -14,12 +14,10 @@ apt() {
 
     case $COMMAND in
         install | upgrade)
-            [[ $APT_INITIAL_UPDATE_DONE == 0 ]] && apt update
             COMMAND_PREFIX="DEBIAN_FRONTEND=noninteractive "
             COMMAND_ARGS+=" -y"
             ;;
         update)
-            [[ $APT_INITIAL_UPDATE_DONE == 0 ]] && APT_INITIAL_UPDATE_DONE=1
             COMMAND_ARGS+=" -y"
             ;;
         remove | purge)
@@ -170,6 +168,13 @@ apt_action_queued_packages() {
 
 apt_clear_queue() {
     APT_PACKAGE_QUEUE=()
+}
+
+apt_perform_initial_update() {
+    if [[ $APT_INITIAL_UPDATE_DONE == 0 ]]; then
+        apt update
+        APT_INITIAL_UPDATE_DONE=1
+    fi
 }
 
 apt_install_package_repository_prerequisites() {
