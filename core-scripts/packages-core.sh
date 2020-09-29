@@ -42,6 +42,11 @@ packages() {
             PACKAGE_COMMAND=add_package_repository
             ;;
 
+        # Is package available?
+        is_available)
+            PACKAGE_COMMAND=is_package_available
+            ;;
+
         # Is package installed?
         is_installed)
             PACKAGE_COMMAND=is_package_installed

@@ -16,6 +16,7 @@ brew_install_package() {
     package_manager_exists brew || return
 
     for PACKAGE in ${PACKAGES[@]}; do
+        brew_is_package_available $PACKAGE || continue
         brew_is_package_installed $PACKAGE && continue
 
         brew install $PACKAGE
@@ -67,6 +68,12 @@ brew_add_package_repository() {
         line "Adding brew tap '$REPO'..."
         brew tap "$REPO"
     }
+}
+
+brew_is_package_available() {
+    local PACKAGE=$1
+
+    brew search --formula $PACKAGE | tail -n +2 | awk '{print $1}' | grep $QUIET_FLAG_GREP "^$PACKAGE" 2>/dev/null
 }
 
 brew_is_package_installed() {

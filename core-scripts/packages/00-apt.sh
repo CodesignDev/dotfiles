@@ -25,6 +25,9 @@ apt() {
             COMMAND="remove"
             COMMAND_ARGS+=" -y"
             ;;
+        search)
+            APT_CMD=$(get_command_path apt-cache)
+            ;;
         *)
             ;;
     esac
@@ -113,6 +116,12 @@ apt_add_package_repository() {
     apt_update_packages
 }
 
+apt_is_package_available() {
+    local PACKAGE=$1
+
+    apt search $PACKAGE | awk '{print $1}' | grep $QUIET_FLAG_GREP "$PACKAGE$" 2>/dev/null
+}
+
 apt_is_package_installed() {
     local PACKAGE=$1
 
@@ -140,6 +149,7 @@ apt_queue_check_package() {
     case $APT_QUEUE_ACTION in
 
         install)
+            apt_is_package_available $PACKAGE || return 0
             apt_is_package_installed $PACKAGE && return 0
             ;;
 
