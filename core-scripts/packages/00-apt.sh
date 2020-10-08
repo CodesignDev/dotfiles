@@ -8,22 +8,29 @@ apt() {
     local COMMAND=$1
     local ARGS=(${@:2})
 
+    local APT_NO_INSTALL_RECOMMENDS=${APT_NO_INSTALL_RECOMMENDS:-0}
+    local APT_COMMAND_ARGS=${APT_COMMAND_ARGS:-}
+
     local SUDO_COMMAND="sudo_askpass"
     local COMMAND_PREFIX=
-    local COMMAND_ARGS=$QUIET_FLAG_APT
+    local COMMAND_ARGS=()
+
+    COMMAND_ARGS+=($QUIET_FLAG_APT)
+    COMMAND_ARGS+=($APT_COMMAND_ARGS)
 
     case $COMMAND in
         install | upgrade)
+            [[ "$APT_NO_INSTALL_RECOMMENDS" == "1" ]] && COMMAND_ARGS+=(--no-install-recommends)
             COMMAND_PREFIX="DEBIAN_FRONTEND=noninteractive "
-            COMMAND_ARGS+=" -y"
+            COMMAND_ARGS+=(-y)
             ;;
         update)
-            COMMAND_ARGS+=" -y"
+            COMMAND_ARGS+=(-y)
             ;;
         remove | purge)
-            [[ "$COMMAND" == "purge" ]] && COMMAND_ARGS+="--purge"
+            [[ "$COMMAND" == "purge" ]] && COMMAND_ARGS+=(--purge)
             COMMAND="remove"
-            COMMAND_ARGS+=" -y"
+            COMMAND_ARGS+=(-y)
             ;;
         search)
             APT_CMD=$(get_command_path apt-cache)

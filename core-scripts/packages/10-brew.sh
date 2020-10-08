@@ -7,7 +7,17 @@ brew() {
     local COMMAND=$1
     local ARGS=(${@:2})
 
-    $BREW_CMD $COMMAND ${ARGS[*]}
+    local BREW_INSTALL_HEAD=${BREW_INSTALL_HEAD:-0}
+    local BREW_COMMAND_ARGS=${BREW_COMMAND_ARGS:-}
+
+    local COMMAND_ARGS=()
+
+    COMMAND_ARGS+=($QUIET_FLAG_BREW)
+    COMMAND_ARGS+=($BREW_COMMAND_ARGS)
+
+    [[ "$BREW_INSTALL_HEAD" == "1" ]] && COMMAND_ARGS+=(--HEAD)
+
+    $BREW_CMD $COMMAND ${COMMAND_ARGS[*]} ${ARGS[*]}
 }
 
 brew_install_package() {
