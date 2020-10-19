@@ -2,6 +2,7 @@
 
 # Arch flags
 export OS_ARCH=
+export OS_ARCH_RAW=
 export IS_I386=0
 export IS_AMD64=0
 export IS_ARM=0
@@ -11,6 +12,7 @@ detect_arch() {
 
     # Get the arch
     OS_ARCH=$(uname -m)
+    OS_ARCH_RAW=$OS_ARCH
 
     # Tweak some values
     case $OS_ARCH in
