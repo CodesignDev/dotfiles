@@ -41,19 +41,18 @@ if command_exists kubectl && [[ ! -d $KREW_DIR ]]; then
     line "Installing krew..."
     KREW_DOWNLOAD_DIR=$(mktemp -dt kubectl-krew.XXXXXXXX)
     curl -fsSL "https://github.com/kubernetes-sigs/krew/releases/download/$KREW_LATEST_VERSION/krew.tar.gz" > $KREW_DOWNLOAD_DIR/krew.tar.gz
-    curl -fsSL "https://github.com/kubernetes-sigs/krew/releases/download/$KREW_LATEST_VERSION/krew.yaml" > $KREW_DOWNLOAD_DIR/krew.yaml
 
     # Extract the archive
     tar zxvf $KREW_DOWNLOAD_DIR/krew.tar.gz -C $KREW_DOWNLOAD_DIR
 
     # Try and get the relevant file for this OS / arch
-    KREW_CMD=$KREW_DOWNLOAD_DIR/krew-${OS}_${ARCH}
+    KREW_CMD=$KREW_DOWNLOAD_DIR/krew-${OS}_${OS_ARCH}
 
     # If that isn't a valid combination, fallback to the 64bit version
     [[ -f $KREW_CMD ]] || KREW_CMD=$KREW_DOWNLOAD_DIR/krew-${OS}_amd64
 
     # Install krew and update its plugin index
-    "$KREW_CMD" install --manifest=$KREW_DOWNLOAD_DIR/krew.yaml --archive=$KREW_DOWNLOAD_DIR/krew.tar.gz
+    "$KREW_CMD" install krew
     "$KREW_CMD" update
 
     # Cleanup
