@@ -41,7 +41,7 @@ if ! command_exists go; then
 
             # Do we have a download url?
             [[ -n "$GO_URL" ]] && break
-            
+
         done
 
         # If we still don't have a download url, fail it
