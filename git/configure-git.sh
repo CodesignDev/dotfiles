@@ -33,7 +33,7 @@ if is_macos; then
 # Linux specific
 elif is_linux; then
 
-    # IWSL flavoured linux
+    # WSL flavoured linux
     if is_wsl; then
 
         # Find if git installed on the host machine
@@ -49,23 +49,28 @@ elif is_linux; then
             # Try and find the git credential manager by searching each directory
             while [[ "$WSL_HOST_GIT_PATH" == *'\'* ]]; do
 
-                # Search for the git-credential-manager in the current folder
+                # Search for the git-credential-manager or git-credential-manager-core in the current folder
                 WSL_HOST_GIT_CREDENTIAL_MANAGER_PATH="$(wsl_find "$WSL_HOST_GIT_PATH" "git-credential-manager.exe" 2>/dev/null)"
+                WSL_HOST_GIT_CREDENTIAL_MANAGER_CORE_PATH="$(wsl_find "$WSL_HOST_GIT_PATH" "git-credential-manager-core.exe" 2>/dev/null)"
 
                 # If we have a result, break out of the loop
-                [[ -n "$WSL_HOST_GIT_CREDENTIAL_MANAGER_PATH" ]] && break
+                [[ -n "$WSL_HOST_GIT_CREDENTIAL_MANAGER_PATH" || -n "$WSL_HOST_GIT_CREDENTIAL_MANAGER_CORE_PATH" ]] && break
 
                 # Move up a directory
                 WSL_HOST_GIT_PATH="$(wsl_dirname "$WSL_HOST_GIT_PATH")"
 
             done
 
+            # Get the relevant credential manager path
+            WSL_GIT_CREDENTIAL_MANAGER="$WSL_HOST_GIT_CREDENTIAL_MANAGER_PATH"
+            [[ -z "$WSL_GIT_CREDENTIAL_MANAGER" && -n "$WSL_HOST_GIT_CREDENTIAL_MANAGER_CORE_PATH" ]] && WSL_GIT_CREDENTIAL_MANAGER="$WSL_HOST_GIT_CREDENTIAL_MANAGER_CORE_PATH"
+
             # Convert the WSL path to a linux one and escape it
-            WSL_HOST_GIT_CREDENTIAL_MANAGER_PATH="$(wsl_path "$WSL_HOST_GIT_CREDENTIAL_MANAGER_PATH")"
-            WSL_HOST_GIT_CREDENTIAL_MANAGER_PATH="$(wsl_escape_path "$WSL_HOST_GIT_CREDENTIAL_MANAGER_PATH")"
+            WSL_GIT_CREDENTIAL_MANAGER="$(wsl_path "$WSL_GIT_CREDENTIAL_MANAGER")"
+            WSL_GIT_CREDENTIAL_MANAGER="$(wsl_escape_path "$WSL_GIT_CREDENTIAL_MANAGER")"
 
             # Assign the path to git
-            GIT_CREDENTIAL_MANAGER="$WSL_HOST_GIT_CREDENTIAL_MANAGER_PATH"
+            GIT_CREDENTIAL_MANAGER="$WSL_GIT_CREDENTIAL_MANAGER"
 
         # Git isn't install on the host, so use the file based credential manager instead
         else
