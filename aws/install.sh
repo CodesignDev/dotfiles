@@ -13,7 +13,7 @@ if ! command_exists aws; then
     curl -fsSL "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" > $AWS_CLI_DOWNLOAD_DIR/awscli.zip
 
     # Extract the archive
-    unzip $QUIET_FLAG "$AWS_CLI_DOWNLOAD_DIR/awscli.zip" -d "$AWS_CLI_DOWNLOAD_DIR/awscli"
+    unzip $QUIET_FLAG_UNZIP "$AWS_CLI_DOWNLOAD_DIR/awscli.zip" -d "$AWS_CLI_DOWNLOAD_DIR/awscli"
 
     # Run the installer
     sudo_askpass "$AWS_CLI_DOWNLOAD_DIR/awscli/aws/install" -i /usr/local/aws-cli -b /usr/local/bin

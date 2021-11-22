@@ -8,4 +8,4 @@ packages update
 
 # Install some core dependencies
 line "Installing some prerequisite software for Linux..."
-packages restrict !brew | packages install build-essential curl file git jq
+packages restrict !brew | packages install build-essential curl file git jq unzip
