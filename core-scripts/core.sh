@@ -46,13 +46,14 @@ trap "hook_run cleanup" EXIT
 # Get the OS and Arch
 source $CORE_SCRIPTS_DIR/os.sh
 source $CORE_SCRIPTS_DIR/arch.sh
+source $CORE_SCRIPTS_DIR/distribution.sh
 detect_os
 detect_arch
+detect_distribution
 
 # Incldue our other core libraries
 source $CORE_SCRIPTS_DIR/sudo.sh
 source $CORE_SCRIPTS_DIR/topics.sh
-
 
 # Initialize the plugins system
 source $CORE_SCRIPTS_DIR/plugins.sh
