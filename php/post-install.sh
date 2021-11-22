@@ -12,7 +12,7 @@ if command_exists phpenv; then
 
     # Get 2 more previous versions of php as well
     PHP_VERSION_FILTER="a.b.c" # Dummy value to get the variable set
-    while [[ ${PHP_VERSIONS[#]} -le 3 ]]; do
+    while [[ ${#PHP_VERSIONS[@]} -lt 3 ]]; do
 
         # Add the previous version to the filter
         PHP_VERSION_FOR_FILTER=$(echo $PHP_VERSION | cut -f -2 -d .)
@@ -31,7 +31,7 @@ if command_exists phpenv; then
 
         # Message to print
         [[ "$PHP_VERSION" == "$PHP_LATEST_VERSION" ]] && LATEST_TEXT="latest " || LATEST_TEXT=""
-        MESSAGE=$(printf "Installing %sphp version (%s) via phpenv..." $LATEST_TEXT $PHP_VERSION)
+        MESSAGE=$(printf 'Installing %2$sphp version (%1$s) via phpenv...' "$PHP_VERSION" "$LATEST_TEXT")
 
         # Install the specified version of php
         phpenv versions --bare | grep $QUIET_FLAG_GREP $PHP_VERSION || {
