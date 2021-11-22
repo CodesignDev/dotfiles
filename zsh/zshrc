@@ -1,0 +1,23 @@
+# Home of the .files repo
+DOTFILES_ROOT=$HOME/.dotfiles
+
+# Export shell variables
+export DOTFILES_HOME=$DOTFILES_ROOT
+export ZSH=$DOTFILES_ROOT
+
+# Import the dotfiles runtime
+source "$DOTFILES_ROOT/core-scripts/runtime.sh"
+
+# Load env and path settings
+dotfiles load_env
+dotfiles load_path
+
+# Load and run the topic scripts
+dotfiles run_scripts $DOTFILES_ROOT "*.zsh"
+
+# Run some updater scripts in the background
+dotfiles update_env & > "$DOTFILES_ROOT/logs/df-update-env.log"
+dotfiles update_path & > "$DOTFILES_ROOT/logs/df-update-path.log"
+
+# Load the theme
+dotfiles load_theme

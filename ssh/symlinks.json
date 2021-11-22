@@ -1,0 +1,7 @@
+{
+    "ssh_config": {
+        "destination": "$HOME/.ssh/config",
+        "type": "ssh_config",
+        "permissions": "0600"
+    }
+}

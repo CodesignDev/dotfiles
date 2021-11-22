@@ -1,0 +1,9 @@
+{
+    "gitconfig": {
+        "destination": "$HOME/.gitconfig",
+        "type": "gitconfig"
+    },
+    "gitignore": {
+        "destination": "$HOME/.gitignore_global"
+    }
+}

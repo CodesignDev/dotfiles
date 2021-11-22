@@ -1,0 +1,5 @@
+{
+    "tmux.conf": {
+        "destination": "$HOME/.tmux.conf"
+    }
+}
