@@ -55,6 +55,9 @@ if command_exists kubectl && [[ ! -d $KREW_DIR ]]; then
     "$KREW_CMD" install krew
     "$KREW_CMD" update
 
+    # Add krew to the path
+    export PATH="$KREW_DIR/bin:$PATH"
+
     # Cleanup
     rm -rf $KREW_DOWNLOAD_DIR
 fi
