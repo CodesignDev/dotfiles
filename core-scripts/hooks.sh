@@ -72,7 +72,7 @@ hooks_disabled() {
     local HOOK=$1
 
     # Are hooks disabled globally?
-    [[ "$DISABLE_HOOKS_GLOBAL" == "1" ]] && return 0
+    [[ "$DISABLED_HOOKS_GLOBAL" == "1" ]] && return 0
 
     # Core hooks are never disabled
     hook_is_core_hook $HOOK && return 1
