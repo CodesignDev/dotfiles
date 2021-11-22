@@ -59,6 +59,12 @@ packages() {
 
         # ----------------------------------------
 
+        # Check if a package manager is supported
+        is_supported)
+            PACKAGE_MANAGER_COMMAND=check_package_manager
+            PACKAGE_COMMAND=is_supported
+            ;;
+
         # Restrict command to particular package manager(s)
         restrict)
             PACKAGE_MANAGER_COMMAND=restrict_package_managers
