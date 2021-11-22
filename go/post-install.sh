@@ -14,7 +14,7 @@ if command_exists go; then
 
     # Install some dependencies
     line "Installing Go dependency manager..."
-    go get -u github.com/golang/dep/cmd/dep
+    curl -fsSL "https://raw.githubusercontent.com/golang/dep/master/install.sh" | sh
 
 else
 
